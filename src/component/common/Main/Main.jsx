@@ -1,4 +1,4 @@
-import * as S from "./Main.style";
+import * as S from "./Main.style.js";
 import RestaurantCard from "../Card/RestaurantCard.jsx";
 
 const MainPage = () => {
@@ -23,7 +23,7 @@ const MainPage = () => {
             category: '일식 • 용인시 처인구 포곡읍',
             author: '백엔드개발자',
             image: null
-        }
+        },
     ];
 
     const scrollToContent = () => {
