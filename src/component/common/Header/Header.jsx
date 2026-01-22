@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import * as S from './Header.style';
 import { useState } from 'react';
 
 const Header = () => {
+    const navi = useNavigate();
     const [open, setOpen] = useState(false);
     return (
         <S.HeaderContainer>
@@ -57,7 +59,7 @@ const Header = () => {
 
                         {open && (
                             <S.DropdownMenu>
-                                <S.DropdownItem><img src="/admin.png" alt="관리자" />관리자 페이지</S.DropdownItem>
+                                <S.DropdownItem onClick={() => navi("/admin")}><img src="/admin.png" alt="관리자" />관리자 페이지</S.DropdownItem>
                                 <S.DropdownItem><img src="/login.png" alt="로그인" />로그인</S.DropdownItem>
                                 <S.DropdownItem><img src="/SignUp.png" alt="회원가입" />회원가입</S.DropdownItem>
                                 <S.DropdownItem><img src="/logout.png" alt="로그아웃" />로그아웃</S.DropdownItem>
