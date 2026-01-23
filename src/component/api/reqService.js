@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = window.ENV?.API_URL;
 
 // 인증이 필요한 요청용 인스턴스
-const authInstance = axios.create({
+export const authInstance = axios.create({
   baseURL: API_URL, // 기본 url
   headers: {
     "Content-Type": "application/json", // 기본 헤더
@@ -11,8 +11,8 @@ const authInstance = axios.create({
 });
 
 // 인증이 불필요한 요청용 인스턴스
-const publicInstance = axios.create({
-  baseURL: API_URL,
+export const publicInstance = axios.create({
+  baseURL: API_URL, // 기본 url
   headers: {
     "Content-Type": "application/json", // 기본 헤더
   },
