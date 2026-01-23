@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Hash } from "lucide-react";
 import {
   HeaderSection,
@@ -17,6 +17,7 @@ import {
 } from "./AdminHashtag.style";
 import SearchBar from "../Common/SearchBar/SearchBar";
 import HashtagModal from "./HashtagModal";
+import { authInstance } from "../../../api/reqService";
 
 const AdminHashtag = () => {
   const [hashtags] = useState([
@@ -48,6 +49,13 @@ const AdminHashtag = () => {
     console.log("삭제 버튼 클릭", selectedHashtags);
   };
 
+  useEffect(() => {
+    authInstance.get("/api/admin/tags?page=1")
+    .then((res) => {
+        console.log(res);
+        console.log(res.data);
+    })
+  },[])
   return (
     <Container>
       {/* 헤더 영역*/}
