@@ -35,15 +35,15 @@ const NoticeRow = ({ notice }) => {
         <NoticeRowContainer>
             <TitleCell>
                 <span className="mobile-label">제목:</span>
-                <span className="mobile-value">{notice.title}</span>
+                <span className="mobile-value">{notice.reviewTitle}</span>
             </TitleCell>
             <AuthorCell>
                 <span className="mobile-label">작성자:</span>
-                <span className="mobile-value">{notice.author}</span>
+                <span className="mobile-value">{notice.nickname}</span>
             </AuthorCell>
             <DateCell>
                 <span className="mobile-label">작성일:</span>
-                <span className="mobile-value">{notice.date}</span>
+                <span className="mobile-value">{notice.createDate}</span>
             </DateCell>
             <ViewCountCell>
                 <span className="mobile-label">조회수:</span>
@@ -51,8 +51,8 @@ const NoticeRow = ({ notice }) => {
             </ViewCountCell>
             <StatusCell>
                 <span className="mobile-label">상태:</span>
-                <StatusBadge $isActive={notice.isActive}>
-                    {notice.isActive ? "공개" : "비공개"}
+                <StatusBadge $isActive={notice.status}>
+                    {notice.status ? "공개" : "비공개"}
                 </StatusBadge>
             </StatusCell>
             <OptionsCell>

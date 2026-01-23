@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const NoticeRowContainer = styled.div`
     display: grid;
-    grid-template-columns: 50px 1fr 120px 130px 80px 100px 60px;
+    grid-template-columns: 1fr 120px 130px 80px 100px 60px;
     align-items: center;
     padding: 16px 0;
     border-bottom: 1px solid #e5e7eb;
@@ -32,6 +32,9 @@ export const TitleCell = styled.div`
     font-size: 14px;
     font-weight: 500;
     color: #1a1a1a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     
     .mobile-label {
         display: none;
@@ -43,16 +46,19 @@ export const TitleCell = styled.div`
         padding: 8px 0;
         display: flex;
         gap: 8px;
+        white-space: normal;
         
         .mobile-label {
             display: inline;
             font-weight: 600;
             color: #6b7280;
             min-width: 80px;
+            flex-shrink: 0;
         }
         
         .mobile-value {
             flex: 1;
+            word-break: break-word;
         }
     }
 `;
@@ -60,6 +66,7 @@ export const TitleCell = styled.div`
 export const AuthorCell = styled.div`
     font-size: 14px;
     color: #374151;
+    text-align: center;
     
     .mobile-label {
         display: none;
@@ -73,6 +80,7 @@ export const AuthorCell = styled.div`
         margin-top: 4px;
         display: flex;
         gap: 8px;
+        text-align: left;
         
         .mobile-label {
             display: inline;
@@ -90,6 +98,7 @@ export const AuthorCell = styled.div`
 export const DateCell = styled.div`
     font-size: 14px;
     color: #6b7280;
+    text-align: center;
     
     .mobile-label {
         display: none;
@@ -120,6 +129,7 @@ export const DateCell = styled.div`
 export const ViewCountCell = styled.div`
     font-size: 14px;
     color: #374151;
+    text-align: center;
     
     .mobile-label {
         display: none;

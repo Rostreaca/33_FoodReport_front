@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import {
     HeaderSection,
@@ -9,20 +9,39 @@ import {
     TableHeader,
     TableHeaderCell,
     NoticeList,
-    EmptyStateMessage
+    EmptyStateMessage,
+    PageWrapper
 } from "./AdminNotice.style";
 import SearchBar from "../Common/SearchBar/SearchBar";
 import NoticeRow from "./NoticeRow";
+import axios from "axios";
+import Pagination from "../../../common/Paging/Pagination";
+import { useSearchParams } from "react-router-dom";
+
 
 const AdminNotice = () => {
-    // 임시 데이터 - 나중에 API에서 가져올 예정
-    const [notices] = useState([
-        // 예시 데이터가 있으면 여기에 추가
-    ]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [pageInfo, setPageInfo] = useState({});
+    const [notices, setNotices] = useState([]);
 
+    const Notices = async (page) => {
+       
+        setPageInfo(res.data.data.pages);
+        setNotices(res.data.data.adminReviews);
+    };
+
+    useEffect(() => {
+        const page = searchParams.get('page') || '1';
+        Notices(page);
+    }, [searchParams]);
+
+    const handlePageChange = (page) => {
+        setSearchParams({ page });
+    }
+    
     return (
         <Container>
-            {/* 헤더 영역*/ }
+            {/* 헤더 영역 */}
             <HeaderSection>
                 <Breadcrumb>
                     <Bell size={20} />
@@ -30,14 +49,13 @@ const AdminNotice = () => {
                 </Breadcrumb>
                 <WelcomeMessage>공지 사항 관리</WelcomeMessage>
             </HeaderSection>
-            { /* 검색 영역 */}
+
+            {/* 검색 영역 */}
             <SearchBar placeholder="공지 사항 제목을 검색하세요."/>
-            { /* 메인 콘텐트 영역 */}
+
+            {/* 메인 콘텐트 영역 */}
             <MainContentArea>
                 <TableHeader>
-                    <TableHeaderCell style={{ width: '50px' }}>
-                        <input type="checkbox" />
-                    </TableHeaderCell>
                     <TableHeaderCell>제목</TableHeaderCell>
                     <TableHeaderCell>작성자</TableHeaderCell>
                     <TableHeaderCell>작성일</TableHeaderCell>
@@ -57,7 +75,15 @@ const AdminNotice = () => {
                     )}
                 </NoticeList>
             </MainContentArea>
-            { /* 페이징 처리하는 영역 */}
+
+            {/* 페이징 처리하는 영역 */}
+            <PageWrapper>
+                <span>페이지 {pageInfo.listCount}개 중 총 {pageInfo.boardLimit}개</span>
+            <Pagination
+                pageInfo={pageInfo}
+                onPageChange={handlePageChange}
+            />
+                </PageWrapper>
         </Container>
     )
 }
