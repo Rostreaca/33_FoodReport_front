@@ -18,7 +18,7 @@ import {
   TagWrapper,
   HashtagContent,
   ContentText,
-  UpdateButton
+  UpdateButton,
 } from "./AdminHashtag.style";
 import SearchBar from "../Common/SearchBar/SearchBar";
 import HashtagModal from "./HashtagModal";
@@ -36,12 +36,14 @@ const AdminHashtag = () => {
   const [activeTagNo, setActiveTagNo] = useState(null);
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
-  const handleTagClick = (tagNo) => { // 해시태그 클릭시 나오는 함수
+  const handleTagClick = (tagNo) => {
+    // 해시태그 클릭시 나오는 함수
     setActiveTagNo((prev) => (prev === tagNo ? null : tagNo));
     setSelectedHashtags((prev) => (prev.includes(tagNo) ? [] : [tagNo]));
   };
 
-  const handleUpdateClick = (selectedHashtags) => { // 변경 버튼 눌렀을때 나오는 함수
+  const handleUpdateClick = (selectedHashtags) => {
+    // 변경 버튼 눌렀을때 나오는 함수
     if (selectedHashtags.length === 0) {
       alert("수정할 해시태그를 선택해주세요.");
       return;
@@ -51,70 +53,74 @@ const AdminHashtag = () => {
 
   const getSelectedHashtagData = () => {
     if (selectedHashtags.length === 0) return null;
-    return hashtags.find(tag => tag.tagNo === selectedHashtags[0]);
-  }
-
-  const handleHashtagSubmit = (hashtag) => { // 추가 버튼 
-    authInstance.post(`/api/admin/tags` , {
-      "tagTitle" : hashtag.name,
-      "tagContent" : hashtag.content
-    }).then((res) => {
-
-      const message = res.data.message;
-
-      if(res.status === 201) {
-        alert(message);
-        hashList(currentPage);
-        setModalOpen(false);
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
-
+    return hashtags.find((tag) => tag.tagNo === selectedHashtags[0]);
   };
 
-  const handleHashtagUpdate  = (hashtag) => {
+  const handleHashtagSubmit = (hashtag) => {
+    // 추가 버튼
+    authInstance
+      .post(`/api/admin/tags`, {
+        tagTitle: hashtag.name,
+        tagContent: hashtag.content,
+      })
+      .then((res) => {
+        const message = res.data.message;
 
-      if (selectedHashtags.length === 0) {
-    alert("수정할 해시태그를 선택해주세요.");
-    return;
-  }
+        if (res.status === 201) {
+          alert(message);
+          hashList(currentPage);
+          setModalOpen(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  const tagNo = selectedHashtags[0];
-
-  authInstance.put(`/api/admin/tags/${tagNo}`, {
-    "tagTitle" : hashtag.name,
-    "tagContent" : hashtag.content
-  })
-  .then((res) => {
-
-    if(res.status === 200) alert(res.data.message);
-  })
-
-  }
-
-  const handleDelete = (selectedHashtags) => { // 삭제 버튼
-
-  if (selectedHashtags.length === 0) return;
-
-  if (!window.confirm("정말 삭제하시겠습니까?")) {
-    return;
-  }
+  const handleHashtagUpdate = (hashtag) => {
+    if (selectedHashtags.length === 0) {
+      alert("수정할 해시태그를 선택해주세요.");
+      return;
+    }
 
     const tagNo = selectedHashtags[0];
-    authInstance.delete(`/api/admin/tags/${tagNo}`)
-    .then((res) => {
-      if(res.status === 204) {
-        alert("삭제에 성공하셨습니다!");
-        hashList(currentPage); 
+
+    authInstance
+      .put(`/api/admin/tags/${tagNo}`, {
+        tagTitle: hashtag.name,
+        tagContent: hashtag.content,
+      })
+      .then((res) => {
+        if (res.status === 200) alert(res.data.message);
+        hashList(currentPage);
         setSelectedHashtags([]);
-      }
-    })
-    .catch((err) => {
-      if(err.status === 400) {
-        alert("삭제할 요청이 없거나 오류가 발생하였습니다.");
-      }
-    })
+      });
+  };
+
+  const handleDelete = (selectedHashtags) => {
+    // 삭제 버튼
+
+    if (selectedHashtags.length === 0) return;
+
+    if (!window.confirm("정말 삭제하시겠습니까?")) {
+      return;
+    }
+
+    const tagNo = selectedHashtags[0];
+    authInstance
+      .delete(`/api/admin/tags/${tagNo}`)
+      .then((res) => {
+        if (res.status === 204) {
+          alert("삭제에 성공하셨습니다!");
+          hashList(currentPage);
+          setSelectedHashtags([]);
+        }
+      })
+      .catch((err) => {
+        if (err.status === 400) {
+          alert("삭제할 요청이 없거나 오류가 발생하였습니다.");
+        }
+      });
   };
 
   // 해시 리스트를 보여주는 함수
@@ -152,8 +158,12 @@ const AdminHashtag = () => {
         </SearchWrapper>
         <ActionButtons>
           <AddButton onClick={() => setModalOpen(true)}>추가</AddButton>
-          <UpdateButton onClick={() => handleUpdateClick(selectedHashtags)}>변경</UpdateButton>
-          <DeleteButton onClick={() => handleDelete(selectedHashtags)}>삭제</DeleteButton>
+          <UpdateButton onClick={() => handleUpdateClick(selectedHashtags)}>
+            변경
+          </UpdateButton>
+          <DeleteButton onClick={() => handleDelete(selectedHashtags)}>
+            삭제
+          </DeleteButton>
         </ActionButtons>
       </SearchActionSection>
       {/* 메인 콘텐트 영역 */}
@@ -207,7 +217,7 @@ const AdminHashtag = () => {
         onClose={() => setUpdateModalOpen(false)}
         onSubmit={handleHashtagUpdate}
         initialData={getSelectedHashtagData()}
-        isEditMode={true} 
+        isEditMode={true}
       />
     </Container>
   );
