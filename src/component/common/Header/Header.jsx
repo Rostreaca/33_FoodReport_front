@@ -60,8 +60,9 @@ const Header = () => {
                         {open && (
                             <S.DropdownMenu>
                                 <S.DropdownItem onClick={() => navi("/admin")}><img src="/admin.png" alt="관리자" />관리자 페이지</S.DropdownItem>
-                                <S.DropdownItem><img src="/login.png" alt="로그인" />로그인</S.DropdownItem>
-                                <S.DropdownItem><img src="/SignUp.png" alt="회원가입" />회원가입</S.DropdownItem>
+                                <S.DropdownItem onClick={() => navi("/login")}><img src="/login.png" alt="로그인" />로그인</S.DropdownItem>
+                                <S.DropdownItem onClick={() => navi("/signup")}><img src="/SignUp.png" alt="회원가입" />회원가입</S.DropdownItem>
+                                <S.DropdownItem onClick={() => navi("/mypage/info")}><img src="/user.png" alt="마이페이지" />마이페이지</S.DropdownItem>
                                 <S.DropdownItem><img src="/logout.png" alt="로그아웃" />로그아웃</S.DropdownItem>
                             </S.DropdownMenu>
                         )}
