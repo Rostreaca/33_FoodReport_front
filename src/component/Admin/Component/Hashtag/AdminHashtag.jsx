@@ -43,6 +43,22 @@ const AdminHashtag = () => {
 
   const handleHashtagSubmit = (hashtag) => {
     console.log("추가 버튼 클릭");
+    console.log(hashtag);
+
+    authInstance.post(`/api/admin/tags` , {
+      "tagTitle" : hashtag.name,
+      "tagContent" : hashtag.content
+    }).then((res) => {
+      console.log(res);
+      const message = res.data.message;
+
+      if(res.status === 201) {
+        alert(message);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+
   };
 
   const handleDelete = (selectedHashtags) => {
