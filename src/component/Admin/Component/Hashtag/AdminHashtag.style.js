@@ -183,3 +183,55 @@ export const EmptyStateMessage = styled.div`
         font-size: 14px;
     }
 `;
+
+export const PageWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #6b7280;
+    
+    @media (max-width: 768px) {
+        font-size: 13px;
+        padding: 10px 0;
+    }
+`;
+
+export const TagWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+  margin: 5px; 
+`;
+
+export const HashtagContent = styled.div`
+  position: absolute;
+  top: calc(100% + 10px); 
+  left: 0;
+  z-index: 100;
+  min-width: 200px;
+  padding: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 15px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+  }
+`;
+
+export const ContentText = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+`;
