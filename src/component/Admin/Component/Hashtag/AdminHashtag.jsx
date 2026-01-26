@@ -14,30 +14,31 @@ import {
   HashtagList,
   HashtagTag,
   EmptyStateMessage,
+  PageWrapper,
+  TagWrapper,
+  HashtagContent,
+  ContentText
 } from "./AdminHashtag.style";
 import SearchBar from "../Common/SearchBar/SearchBar";
 import HashtagModal from "./HashtagModal";
 import { authInstance } from "../../../api/reqService";
+import { useSearchParams } from "react-router-dom";
+import Pagination from "../../../common/Paging/Pagination";
 
 const AdminHashtag = () => {
-  const [hashtags] = useState([
-    // 임시 데이터 - 나중에 API에서 가져올 예정
-    //{ id: 1, name: "염도_최적화", isSelected: true },
-    //{ id: 2, name: "자극치_풀로드", isSelected: false },
-    //{ id: 3, name: "제로_스트레스", isSelected: false },
-  ]);
+  const [hashtags, setHashtags] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-
   const [selectedHashtags, setSelectedHashtags] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [pageInfo, setPageInfo] = useState({});
+  const [activeTagNo, setActiveTagNo] = useState(null);
 
-  const handleTagClick = (hashtagId) => {
-    setSelectedHashtags((prev) => {
-      if (prev.includes(hashtagId)) {
-        return prev.filter((id) => id !== hashtagId);
-      } else {
-        return [...prev, hashtagId];
-      }
-    });
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+
+  const handleTagClick = (tagNo) => {
+    console.log(tagNo);
+    setActiveTagNo((prev) => (prev === tagNo ? null : tagNo));
+    setSelectedHashtags((prev) => (prev.includes(tagNo) ? [] : [tagNo]));
   };
 
   const handleHashtagSubmit = (hashtag) => {
@@ -49,13 +50,26 @@ const AdminHashtag = () => {
     console.log("삭제 버튼 클릭", selectedHashtags);
   };
 
+  // 해시 리스트를 보여주는 함수
+  const hashList = async (page) => {
+    await authInstance.get(`/api/admin/tags?page=${page}`).then((res) => {
+      const total = res.data.data.pageInfo;
+      const hash = res.data.data.adminTag;
+      console.log(hash);
+      console.log(total);
+      setPageInfo(total);
+      setHashtags([...hash]);
+    });
+  };
+
+  const handlePageChange = (page) => {
+    setSearchParams({ page });
+  };
+
   useEffect(() => {
-    authInstance.get("/api/admin/tags?page=1")
-    .then((res) => {
-        console.log(res);
-        console.log(res.data);
-    })
-  },[])
+    hashList(currentPage);
+  }, [currentPage]);
+
   return (
     <Container>
       {/* 헤더 영역*/}
@@ -81,21 +95,37 @@ const AdminHashtag = () => {
         <HashtagList>
           {hashtags.length > 0 ? (
             hashtags.map((hashtag) => (
-              <HashtagTag
-                key={hashtag.id}
-                $isSelected={
-                  selectedHashtags.includes(hashtag.id) || hashtag.isSelected
-                }
-                onClick={() => handleTagClick(hashtag.id)}
-              >
-                #{hashtag.name}
-              </HashtagTag>
+              <TagWrapper key={hashtag.tagNo}>
+                <HashtagTag
+                  $isSelected={selectedHashtags.includes(hashtag.tagNo)}
+                  onClick={() => handleTagClick(hashtag.tagNo)}
+                >
+                  #{hashtag.tagTitle}
+                </HashtagTag>
+
+                {/* activeTagNo와 현재 태그 번호가 일치할 때만 노출 */}
+                {activeTagNo === hashtag.tagNo && (
+                  <HashtagContent>
+                    <ContentText>
+                      {hashtag.tagContent || "등록된 상세 내용이 없습니다."}
+                    </ContentText>
+                  </HashtagContent>
+                )}
+              </TagWrapper>
             ))
           ) : (
             <EmptyStateMessage>게시물이 존재하지 않습니다</EmptyStateMessage>
           )}
         </HashtagList>
       </MainContentArea>
+
+      {/* 페이징 처리하는 영역 */}
+      <PageWrapper>
+        <span>
+          페이지 {pageInfo.listCount}개 중 총 {pageInfo.boardLimit}개
+        </span>
+        <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+      </PageWrapper>
 
       {/* 해시 태그 추가 모달 */}
       <HashtagModal
