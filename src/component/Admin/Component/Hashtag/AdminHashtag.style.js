@@ -150,12 +150,37 @@ export const HashtagTag = styled.div`
     transition: all 0.2s;
     user-select: none;
     
-    background-color: ${props => props.$isSelected ? '#FF6B35' : '#f3f4f6'};
-    color: ${props => props.$isSelected ? 'white' : '#374151'};
+
+    background-color: ${props => {
+        console.log('Status:', props.$status, 'isSelected:', props.$isSelected); // 디버깅용
+        if (props.$isSelected) return '#FF6B35'; 
+        if (props.$status === 'N') return '#FEE2E2'; 
+        return '#f3f4f6'; 
+    }};
+
+
+    color: ${props => {
+        if (props.$isSelected) return 'white';
+        if (props.$status === 'N') return '#EF4444'; 
+        return '#374151';
+    }};
+
+
+    border: ${props => 
+        props.$status === 'N' && !props.$isSelected 
+        ? '1px solid #FECACA' 
+        : '1px solid transparent'
+    };
     
     &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        background-color: ${props => {
+            if (props.$isSelected) return '#e55a2b';
+            if (props.$status === 'N') return '#FCA5A5'; 
+            return '#e5e7eb';
+        }};
     }
     
     &:active {

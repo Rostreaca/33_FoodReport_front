@@ -45,9 +45,30 @@ const AdminHashtag = () => {
     console.log("추가 버튼 클릭");
   };
 
-  const handleDelete = () => {
+  const handleDelete = (selectedHashtags) => {
     // 삭제 로직
-    console.log("삭제 버튼 클릭", selectedHashtags);
+if (selectedHashtags.length === 0) return;
+
+  if (!window.confirm("정말 삭제하시겠습니까?")) {
+    return;
+  }
+
+    const tagNo = selectedHashtags[0];
+    authInstance.delete(`/api/admin/tags/${tagNo}`)
+    .then((res) => {
+      console.log(res);
+      if(res.status === 204) {
+        alert("삭제에 성공하셨습니다!");
+        hashList(currentPage); 
+        setSelectedHashtags([]);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      if(err.status === 400) {
+        alert("삭제할 요청이 없거나 오류가 발생하였습니다.");
+      }
+    })
   };
 
   // 해시 리스트를 보여주는 함수
@@ -87,7 +108,7 @@ const AdminHashtag = () => {
         </SearchWrapper>
         <ActionButtons>
           <AddButton onClick={() => setModalOpen(true)}>추가</AddButton>
-          <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
+          <DeleteButton onClick={() => handleDelete(selectedHashtags)}>삭제</DeleteButton>
         </ActionButtons>
       </SearchActionSection>
       {/* 메인 콘텐트 영역 */}
@@ -98,6 +119,7 @@ const AdminHashtag = () => {
               <TagWrapper key={hashtag.tagNo}>
                 <HashtagTag
                   $isSelected={selectedHashtags.includes(hashtag.tagNo)}
+                  $status={hashtag.status}
                   onClick={() => handleTagClick(hashtag.tagNo)}
                 >
                   #{hashtag.tagTitle}

@@ -14,7 +14,6 @@ import {
 } from "./AdminNotice.style";
 import SearchBar from "../Common/SearchBar/SearchBar";
 import NoticeRow from "./NoticeRow";
-import axios from "axios";
 import Pagination from "../../../common/Paging/Pagination";
 import { useSearchParams } from "react-router-dom";
 
