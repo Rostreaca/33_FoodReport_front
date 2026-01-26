@@ -58,37 +58,30 @@ export const MainContentArea = styled.div`
 `;
 
 export const TableHeader = styled.div`
-    display: grid;
-    grid-template-columns: 50px 200px 250px 1fr 80px 130px 100px 60px;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 2px solid #e5e7eb;
-    gap: 16px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #374151;
-    
-    @media (max-width: 768px) {
-        display: none;
-    }
+  display: grid;
+  grid-template-columns: 60px 150px 200px 1fr 100px 120px 120px 80px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 2px solid #e5e7eb;
+  gap: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const TableHeaderCell = styled.div`
-    display: flex;
-    align-items: center;
-    
-    input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-    }
-    
-    @media (max-width: 768px) {
-        input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-        }
-    }
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) => props.$align || "center"}; 
+  padding: 0 4px;
+  
+  &:nth-child(2), &:nth-child(3), &:nth-child(4) {
+    justify-content: flex-start;
+  }
 `;
 
 export const ReviewList = styled.div`
@@ -111,5 +104,19 @@ export const EmptyStateMessage = styled.div`
     @media (max-width: 768px) {
         padding: 60px 16px;
         font-size: 14px;
+    }
+`;
+
+export const PageWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #6b7280;
+    
+    @media (max-width: 768px) {
+        font-size: 13px;
+        padding: 10px 0;
     }
 `;
