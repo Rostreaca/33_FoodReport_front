@@ -23,23 +23,52 @@ const AdminReview = () => {
   const [pageInfo, setPageInfo] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
+  const [searchText, setSearchText] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   const reviewFindAll = async (page) => {
+    // 전체 조회
     authInstance.get(`/api/admin/reviews?page=${page}`).then((res) => {
-      console.log(res.data.data.adminReviews);
       const reviews = res.data.data.adminReviews;
       setReviews([...reviews]);
       setPageInfo(res.data.data.pages);
     });
   };
 
+  const reviewFindByKeyword = async (page, reviewTitle) => {
+    // 부분(키워드) 조회
+    authInstance
+      .get(`/api/admin/reviews/keyword?page=${page}&reviewTitle=${reviewTitle}`)
+      .then((res) => {
+        const reviews = res.data.data.adminReviews;
+        setReviews([...reviews]);
+        setPageInfo(res.data.data.pages);
+      });
+  };
+
   const handlePageChange = (page) => {
-    setSearchParams({ page });
+    setSearchParams({ page, reviewTitle: searchText });
+  };
+
+  const handleInputChange = (value) => {
+    setSearchInput(value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      setSearchText(searchInput);
+      setSearchParams({ page: 1 });
+    }
   };
 
   useEffect(() => {
-    reviewFindAll(currentPage);
-  }, [currentPage]);
+    // 전체 조회 useEffect
+    if (searchText.trim()) {
+      reviewFindByKeyword(currentPage, searchText);
+    } else {
+      reviewFindAll(currentPage);
+    }
+  }, [currentPage, searchText]);
 
   return (
     <Container>
@@ -52,7 +81,12 @@ const AdminReview = () => {
         <WelcomeMessage>리뷰 관리</WelcomeMessage>
       </HeaderSection>
       {/* 검색 영역 */}
-      <SearchBar placeholder="리뷰 내용을 검색하세요." />
+      <SearchBar
+        placeholder="리뷰 내용을 검색하세요."
+        value={searchInput}
+        onChange={handleInputChange}
+        onKeyPress={handleKeyPress}
+      />
       {/* 메인 콘텐트 영역 */}
       <MainContentArea>
         <TableHeader>
