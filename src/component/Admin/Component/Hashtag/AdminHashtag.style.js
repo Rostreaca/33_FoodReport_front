@@ -116,6 +116,27 @@ export const DeleteButton = styled.button`
     }
 `;
 
+export const UpdateButton = styled.button`
+    padding: 10px 24px;
+    background-color: #ff8838;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+        background-color: #ff8838;
+    }
+    
+    @media (max-width: 768px) {
+        flex: 1;
+        padding: 12px 20px;
+    }
+`;
+
 export const MainContentArea = styled.div`
     background: white;
     border-radius: 12px;
@@ -152,7 +173,6 @@ export const HashtagTag = styled.div`
     
 
     background-color: ${props => {
-        console.log('Status:', props.$status, 'isSelected:', props.$isSelected); // 디버깅용
         if (props.$isSelected) return '#FF6B35'; 
         if (props.$status === 'N') return '#FEE2E2'; 
         return '#f3f4f6'; 

@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, MessageCircleMore, Hash } from "lucide-react";
 import * as S from "./HashtagModal.style";
 
-const HashtagModal = ({ isOpen, onClose, onSubmit }) => {
+const HashtagModal = ({ isOpen, onClose, onSubmit, initialData = null, isEditMode = false }) => {
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
+
+  // ✅ initialData가 있으면 필드 채우기
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData && isEditMode) {
+        setName(initialData.tagTitle || "");
+        setContent(initialData.tagContent || "");
+      } else {
+        setName("");
+        setContent("");
+      }
+    }
+  }, [initialData, isEditMode, isOpen]);
 
   if (!isOpen) return null;
 
@@ -20,13 +33,19 @@ const HashtagModal = ({ isOpen, onClose, onSubmit }) => {
     <S.ModalOverlay onClick={(e) => e.target === e.currentTarget && onClose()}>
       <S.ModalContainer>
         <S.ModalHeader>
-          <S.ModalTitle>해시 태그 추가</S.ModalTitle>
+          {/* ✅ 모드에 따라 제목 변경 */}
+          <S.ModalTitle>
+            {isEditMode ? "해시태그 수정" : "해시태그 추가"}
+          </S.ModalTitle>
           <S.CloseButton onClick={onClose}>
             <X size={24} />
           </S.CloseButton>
         </S.ModalHeader>
 
-        <S.ModalDescription>해시태그를 추가하시겠습니까?</S.ModalDescription>
+        {/* ✅ 모드에 따라 설명 변경 */}
+        <S.ModalDescription>
+          {isEditMode ? "해시태그를 수정하시겠습니까?" : "해시태그를 추가하시겠습니까?"}
+        </S.ModalDescription>
 
         <S.InputSection>
           <S.InputLabel>해시태그 이름</S.InputLabel>
@@ -52,8 +71,9 @@ const HashtagModal = ({ isOpen, onClose, onSubmit }) => {
           </S.InputWrapper>
         </S.InputSection>
 
+        {/* ✅ 모드에 따라 버튼 텍스트 변경 */}
         <S.SubmitButton onClick={handleFormSubmit}>
-          해시태그 추가하기
+          {isEditMode ? "해시태그 수정하기" : "해시태그 추가하기"}
         </S.SubmitButton>
       </S.ModalContainer>
     </S.ModalOverlay>
