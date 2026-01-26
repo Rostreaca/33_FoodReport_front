@@ -24,7 +24,7 @@ const AdminReview = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
-  const ReviewFindAll = async (page) => {
+  const reviewFindAll = async (page) => {
     authInstance.get(`/api/admin/reviews?page=${page}`).then((res) => {
       console.log(res.data.data.adminReviews);
       const reviews = res.data.data.adminReviews;
@@ -38,7 +38,7 @@ const AdminReview = () => {
   };
 
   useEffect(() => {
-    ReviewFindAll(currentPage);
+    reviewFindAll(currentPage);
   }, [currentPage]);
 
   return (
@@ -56,7 +56,7 @@ const AdminReview = () => {
       {/* 메인 콘텐트 영역 */}
       <MainContentArea>
         <TableHeader>
-          <TableHeaderCell></TableHeaderCell>
+          <TableHeaderCell>프로필</TableHeaderCell>
           <TableHeaderCell $align="flex-start">작성자</TableHeaderCell>
           <TableHeaderCell $align="flex-start">리뷰 제목</TableHeaderCell>
           <TableHeaderCell $align="flex-start">리뷰 내용</TableHeaderCell>

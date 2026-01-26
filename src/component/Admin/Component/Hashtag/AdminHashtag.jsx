@@ -154,7 +154,6 @@ const AdminHashtag = () => {
       {/* 검색 및 액션 영역 */}
       <SearchActionSection>
         <SearchWrapper>
-          <SearchBar placeholder="검색어를 입력해주세요." />
         </SearchWrapper>
         <ActionButtons>
           <AddButton onClick={() => setModalOpen(true)}>추가</AddButton>
