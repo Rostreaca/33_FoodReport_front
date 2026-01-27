@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import * as S from './SignUp.style';
 import axios from "axios";
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext'
 
 const SignUp = () => {
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -123,10 +126,12 @@ const SignUp = () => {
             return;
         }
 
+        /*
         if (!emailChecked) {
             alert('이메일 중복 확인을 해주세요.');
             return;
         }
+            */
 
         axios.post("http://localhost:8080/api/members", {
             email,
@@ -143,9 +148,8 @@ const SignUp = () => {
             console.log(error);
         })        
 
-        // TODO: 회원가입 API 호출
         console.log('SignUp:', formData);
-        // navigate('/login');
+
     };
 
     return (

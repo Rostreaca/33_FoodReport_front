@@ -5,6 +5,7 @@ import Header from './component/common/Header/Header'
 import Footer from './component/common/Footer/Footer'
 import Admin from './component/Admin/Admin'
 import Login from './component/Member/Login'
+import { AuthProvider } from './component/context/AuthContext';
 import SignUp from './component/Member/SignUp'
 import MyPage from './component/Member/MyPage'
 import MyInfo from './component/Member/MyInfo'
@@ -17,6 +18,7 @@ function App() {
 
   return (
     <>
+     <AuthProvider>
       <Header />
       <Routes>
         <Route path="/" element={<Main />} />
@@ -30,11 +32,12 @@ function App() {
           <Route path="likes" element={<LikesList />} />
           <Route path="reviews" element={<ReviewManagement />} />
           <Route path="withdrawal" element={<MemberWithdrawal />} />
-        </Route>
-      </Routes>
+          </Route>
+       </Routes>
       <Footer />
+    </AuthProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
