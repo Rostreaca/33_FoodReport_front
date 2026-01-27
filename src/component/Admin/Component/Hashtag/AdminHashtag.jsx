@@ -20,11 +20,11 @@ import {
   ContentText,
   UpdateButton,
 } from "./AdminHashtag.style";
-import SearchBar from "../Common/SearchBar/SearchBar";
 import HashtagModal from "./HashtagModal";
 import { authInstance } from "../../../api/reqService";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../../../common/Paging/Pagination";
+import Toast from "../../../common/Toast/Toast";
 
 const AdminHashtag = () => {
   const [hashtags, setHashtags] = useState([]);
@@ -35,6 +35,11 @@ const AdminHashtag = () => {
   const [pageInfo, setPageInfo] = useState({});
   const [activeTagNo, setActiveTagNo] = useState(null);
   const currentPage = parseInt(searchParams.get("page")) || 1;
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
 
   const handleTagClick = (tagNo) => {
     // 해시태그 클릭시 나오는 함수
@@ -42,17 +47,23 @@ const AdminHashtag = () => {
     setSelectedHashtags((prev) => (prev.includes(tagNo) ? [] : [tagNo]));
   };
 
+  const showToast = (message, type = "error") => {
+    // 알럿 대신 토스트
+    setToast({ show: true, message, type });
+  };
   const handleUpdateClick = (selectedHashtags) => {
     // 변경 버튼 눌렀을때 나오는 함수
     if (selectedHashtags.length === 0) {
-      alert("수정할 해시태그를 선택해주세요.");
+      showToast("수정할 해시태그를 선택해주세요.");
       return;
     }
     setUpdateModalOpen(true);
   };
 
   const getSelectedHashtagData = () => {
-    if (selectedHashtags.length === 0) return null;
+    if (selectedHashtags.length === 0) {
+      return null;
+    }
     return hashtags.find((tag) => tag.tagNo === selectedHashtags[0]);
   };
 
@@ -67,7 +78,7 @@ const AdminHashtag = () => {
         const message = res.data.message;
 
         if (res.status === 201) {
-          alert(message);
+          showToast(message, "success");
           hashList(currentPage);
           setModalOpen(false);
         }
@@ -79,7 +90,7 @@ const AdminHashtag = () => {
 
   const handleHashtagUpdate = (hashtag) => {
     if (selectedHashtags.length === 0) {
-      alert("수정할 해시태그를 선택해주세요.");
+      showToast("수정할 해시태그를 선택해주세요.", "error");
       return;
     }
 
@@ -91,7 +102,9 @@ const AdminHashtag = () => {
         tagContent: hashtag.content,
       })
       .then((res) => {
-        if (res.status === 200) alert(res.data.message);
+        if (res.status === 200) {
+          showToast(res.data.message, "success");
+        }
         hashList(currentPage);
         setSelectedHashtags([]);
       });
@@ -99,8 +112,10 @@ const AdminHashtag = () => {
 
   const handleDelete = (selectedHashtags) => {
     // 삭제 버튼
-
-    if (selectedHashtags.length === 0) return;
+    if (selectedHashtags.length === 0) {
+      showToast("삭제할 해시태그를 선택해주세요.", "error");
+      return;
+    }
 
     if (!window.confirm("정말 삭제하시겠습니까?")) {
       return;
@@ -111,14 +126,14 @@ const AdminHashtag = () => {
       .delete(`/api/admin/tags/${tagNo}`)
       .then((res) => {
         if (res.status === 204) {
-          alert("삭제에 성공하셨습니다!");
+          showToast("삭제에 성공하셨습니다!", "success");
           hashList(currentPage);
           setSelectedHashtags([]);
         }
       })
       .catch((err) => {
         if (err.status === 400) {
-          alert("삭제할 요청이 없거나 오류가 발생하였습니다.");
+          showToast("삭제할 요청이 없거나 오류가 발생하였습니다.", "error");
         }
       });
   };
@@ -143,6 +158,14 @@ const AdminHashtag = () => {
 
   return (
     <Container>
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={2000}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
       {/* 헤더 영역*/}
       <HeaderSection>
         <Breadcrumb>
@@ -153,8 +176,7 @@ const AdminHashtag = () => {
       </HeaderSection>
       {/* 검색 및 액션 영역 */}
       <SearchActionSection>
-        <SearchWrapper>
-        </SearchWrapper>
+        <SearchWrapper></SearchWrapper>
         <ActionButtons>
           <AddButton onClick={() => setModalOpen(true)}>추가</AddButton>
           <UpdateButton onClick={() => handleUpdateClick(selectedHashtags)}>
