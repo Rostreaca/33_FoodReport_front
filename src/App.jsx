@@ -11,6 +11,7 @@ import MyInfo from './component/Member/MyInfo'
 import LikesList from './component/Member/LikesList'
 import ReviewManagement from './component/Member/ReviewManagement'
 import MemberWithdrawal from './component/Member/MemberWithdrawal'
+import ReviewList from './component/Review/ReviewList'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/reviews" element={<ReviewList />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
