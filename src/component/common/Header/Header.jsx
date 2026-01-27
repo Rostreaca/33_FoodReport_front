@@ -32,7 +32,7 @@ const Header = () => {
                         추천 맛집
                     </S.DropdownButton>
 
-                    <S.DropdownButton>
+                    <S.DropdownButton onClick={() => navi('/reviews')}>
                         리뷰 모음
                     </S.DropdownButton>
 

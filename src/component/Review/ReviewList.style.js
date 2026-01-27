@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const Icon = styled.img`
-  width: ${(props) => props.$size || 16}px;
-  height: ${(props) => props.$size || 16}px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 `;
 
@@ -35,6 +35,7 @@ export const TagContainer = styled.div`
 `;
 
 export const Tag = styled.button`
+  position: relative;
   padding: 8px 16px;
   border-radius: 20px;
   border: 1px solid ${(props) => (props.$active ? "#f97316" : "#e5e7eb")};
@@ -47,6 +48,26 @@ export const Tag = styled.button`
   &:hover {
     border-color: #f97316;
     color: #f97316;
+
+    &::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      
+      background: linear-gradient(135deg, #f97316, #fb923c); 
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px; 
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); 
+      z-index: 100;
+      pointer-events: none;
+  }
+
   }
 `;
 
@@ -163,6 +184,7 @@ export const ReviewCard = styled.div`
   transition: box-shadow 0.2s;
 
   &:hover {
+    cursor : pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 `;
@@ -184,8 +206,9 @@ export const CardCategory = styled.div`
   left: 12px;
   padding: 4px 10px;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: 12px;
+  font-weight : 700;
   color: #6b7280;
 `;
 
@@ -227,6 +250,9 @@ export const CardDescription = styled.p`
   color: #9ca3af;
   margin: 0 0 16px 0;
   line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CardFooter = styled.div`
@@ -334,3 +360,8 @@ export const SearchButton = styled.button`
     stroke: #374151;
   }
 `;
+
+export const BackgroundImg = styled.img`
+  width: 100%;
+  height: 100%;
+`
