@@ -18,12 +18,24 @@ import {
   OptionsMenuItem,
 } from "./ReviewRow.style";
 import { authInstance } from "../../../api/reqService";
+import Toast from "../../../common/Toast/Toast";
 
 const ReviewRow = ({ review, onStatusChange }) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
 
   const toggleOptions = () => {
+    // 토글 옵션
     setIsOptionsOpen(!isOptionsOpen);
+  };
+
+  const showToast = (message, type = "error") => {
+    // 알럿 대신 토스트
+    setToast({ show: true, message, type });
   };
 
   const handleActivate = () => {
@@ -32,15 +44,17 @@ const ReviewRow = ({ review, onStatusChange }) => {
       authInstance
         .put(`/api/admin/reviews/${review.reviewNo}`)
         .then((res) => {
-          alert(res.data.message);
+          console.log(res);
           onStatusChange();
+          showToast(res.data.message, "success");
         })
         .catch((err) => {
           console.log(err);
+          showToast("활성화에 실패했습니다.", "error");
         });
       setIsOptionsOpen(false);
     } else {
-      alert("이미 활성화된 리뷰입니다.");
+      showToast("이미 활성화 되어있습니다!", "error");
     }
   };
 
@@ -52,17 +66,18 @@ const ReviewRow = ({ review, onStatusChange }) => {
         .then((res) => {
           console.log(res);
           if (res.status === 204) {
-            alert("비활성화에 성공하셨습니다!");
+            showToast("비활성화에 성공했습니다!", "success");
             onStatusChange();
           }
         })
         .catch((err) => {
           console.log(err);
+          showToast("비활성화에 실패했습니다.", "error");
         });
 
       setIsOptionsOpen(false);
     } else {
-      alert("이미 비활성화된 리뷰입니다.");
+      showToast("이미 비활성화된 리뷰입니다.", "error");
     }
   };
 
@@ -76,6 +91,14 @@ const ReviewRow = ({ review, onStatusChange }) => {
 
   return (
     <ReviewRowContainer>
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={3000}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
       <Avatar>
         {review.profileImage ? (
           <img src={review.profileImage} alt={review.nickname} />
