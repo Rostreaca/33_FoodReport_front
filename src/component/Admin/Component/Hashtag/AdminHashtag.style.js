@@ -173,15 +173,15 @@ export const HashtagTag = styled.div`
     
 
     background-color: ${props => {
-        if (props.$isSelected) return '#FF6B35'; 
-        if (props.$status === 'N') return '#FEE2E2'; 
+        if (props.$isSelected) return '#ff7402'; 
+        if (props.$status === 'N') return '#feede2'; 
         return '#f3f4f6'; 
     }};
 
 
     color: ${props => {
         if (props.$isSelected) return 'white';
-        if (props.$status === 'N') return '#EF4444'; 
+        if (props.$status === 'N') return '#ff7300'; 
         return '#374151';
     }};
 

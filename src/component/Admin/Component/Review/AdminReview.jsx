@@ -26,7 +26,7 @@ const AdminReview = () => {
   const [searchText, setSearchText] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  const reviewFindAll = async (page) => {
+  const reviewFindAll = (page) => {
     // 전체 조회
     authInstance.get(`/api/admin/reviews?page=${page}`).then((res) => {
       const reviews = res.data.data.adminReviews;
@@ -35,7 +35,7 @@ const AdminReview = () => {
     });
   };
 
-  const reviewFindByKeyword = async (page, reviewTitle) => {
+  const reviewFindByKeyword = (page, reviewTitle) => {
     // 부분(키워드) 조회
     authInstance
       .get(`/api/admin/reviews/keyword?page=${page}&reviewTitle=${reviewTitle}`)
@@ -71,7 +71,8 @@ const AdminReview = () => {
     }
   }, [currentPage, searchText]);
 
-  const refreshReviews = () => { // 자식 콜백함수 새로고침용
+  const refreshReviews = () => {
+    // 자식 콜백함수 새로고침용
     if (searchText.trim()) {
       // 공백을 제거하고 검색어가 있으면 부분조회
       reviewFindByKeyword(currentPage, searchText);
