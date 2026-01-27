@@ -66,6 +66,14 @@ const AdminPlace = () => {
     }
   }, [currentPage, searchText]);
 
+const refreshPlaces = () => {
+    if(searchText.trim()) {
+        placeFindByKeyword(currentPage, searchText);
+    } else {
+        placeFindAll(currentPage);
+    }
+};
+
   return (
     <Container>
       {/* 헤더 영역*/}
@@ -97,7 +105,7 @@ const AdminPlace = () => {
         </TableHeader>
         <PlaceList>
           {places.length > 0 ? (
-            places.map((place, index) => <PlaceRow key={index} place={place} />)
+            places.map((place, index) => <PlaceRow key={index} place={place} onStatusChange={refreshPlaces}/>)
           ) : (
             <EmptyStateMessage>게시물이 존재하지 않습니다</EmptyStateMessage>
           )}

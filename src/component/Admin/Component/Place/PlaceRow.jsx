@@ -15,21 +15,65 @@ import {
   OptionsMenuItem,
   Avatar,
 } from "./PlaceRow.style";
+import { authInstance } from "../../../api/reqService";
+import Toast from "../../../common/Toast/Toast";
 
-const PlaceRow = ({ place }) => {
+const PlaceRow = ({ place, onStatusChange }) => {
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
   const toggleOptions = () => {
     setIsOptionsOpen(!isOptionsOpen);
   };
 
+  const showToast = (message, type = "error") => {
+    setToast({ show: true, message, type });
+  };
+
   const handleEdit = () => {
-    // 수정 로직
+    // 활성화 로직
+    if (place.status === "N") {
+      authInstance
+        .put(`/api/admin/places/${place.placeNo}`)
+        .then((res) => {
+          onStatusChange();
+          showToast(res.data.message, "success");
+        })
+        .catch((err) => {
+          console.log(err);
+          showToast("활성화에 실패하였습니다.", "error");
+        });
+    } else {
+      showToast("이미 활성화 되어있습니다!", "error");
+    }
+
     setIsOptionsOpen(false);
   };
 
   const handleDelete = () => {
-    // 삭제 로직
+    // 비활성화
+
+    if (place.status === "Y") {
+      authInstance
+        .delete(`/api/admin/places/${place.placeNo}`)
+        .then((res) => {
+          if (res.status === 204) {
+              showToast("비활성에 성공했습니다!", "success");
+              onStatusChange();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          showToast("비활성화에 실패하였습니다!", "error");
+        });
+    } else {
+      showToast("이미 비활성화된 리뷰입니다.", "error");
+    }
+
     setIsOptionsOpen(false);
   };
 
@@ -43,6 +87,14 @@ const PlaceRow = ({ place }) => {
 
   return (
     <PlaceRowContainer>
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={3000}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
       <Avatar>
         {place.profileImage ? (
           <img src={place.profileImage} alt={place.nickname} />
@@ -60,7 +112,9 @@ const PlaceRow = ({ place }) => {
       </AddressCell>
       <PlaceContentCell>
         <span className="mobile-label"></span>
-        <span className="mobile-value">{place.placeContent || "내용 없음"}</span>
+        <span className="mobile-value">
+          {place.placeContent || "내용 없음"}
+        </span>
       </PlaceContentCell>
       <ReviewCountCell>
         <span className="mobile-label"></span>
