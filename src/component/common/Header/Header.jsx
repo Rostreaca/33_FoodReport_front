@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import * as S from './Header.style';
 import { useState } from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 const Header = () => {
     const navi = useNavigate();
+    const { auth, logout } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
     return (
         <S.HeaderContainer>
@@ -50,20 +53,44 @@ const Header = () => {
                             <img src="/user.png" alt="유저" />
                         </S.UserAvatar>
 
-                        <S.Username>
-                            로그인이 필요합니다.
-                            <S.DropdownIcon $open={open}>
-                                <img src="/Under2-Icon.png" alt="드롭다운" />
-                            </S.DropdownIcon>
-                        </S.Username>
+                                {
+                                  !auth.isAuthenticated ? (
+                                  <>
+                                  <S.Username>
+                                    로그인이 필요합니다.
+                                     <S.DropdownIcon $open={open}>
+                                        <img src="/Under2-Icon.png" alt="드롭다운" />
+                                    </S.DropdownIcon>
+                                  </S.Username>
+                                  </>
+                                ) : (
+                                  <>
+                                  <S.Username>
+                                    {auth.nickname}님, 환영합니다!
+                                    <S.DropdownIcon $open={open}>
+                                        <img src="/Under2-Icon.png" alt="드롭다운" />
+                                    </S.DropdownIcon>
+                                    </S.Username>
+                                    </>
+                                )}
 
                         {open && (
                             <S.DropdownMenu>
-                                <S.DropdownItem onClick={() => navi("/admin")}><img src="/admin.png" alt="관리자" />관리자 페이지</S.DropdownItem>
-                                <S.DropdownItem onClick={() => navi("/login")}><img src="/login.png" alt="로그인" />로그인</S.DropdownItem>
-                                <S.DropdownItem onClick={() => navi("/signup")}><img src="/SignUp.png" alt="회원가입" />회원가입</S.DropdownItem>
-                                <S.DropdownItem onClick={() => navi("/mypage/info")}><img src="/user.png" alt="마이페이지" />마이페이지</S.DropdownItem>
-                                <S.DropdownItem><img src="/logout.png" alt="로그아웃" />로그아웃</S.DropdownItem>
+                                {
+                                    !auth.isAuthenticated ? (
+                                    <>
+                                    <S.DropdownItem onClick={() => navi("/login")}><img src="/login.png" alt="로그인" />로그인</S.DropdownItem>
+                                    <S.DropdownItem onClick={() => navi("/signup")}><img src="/SignUp.png" alt="회원가입" />회원가입</S.DropdownItem>
+                                    </>
+                                ) : (
+                                    <>
+                                    <S.DropdownItem onClick={() => navi("/mypage/info")}><img src="/user.png" alt="마이페이지" />마이페이지</S.DropdownItem>
+                                    <S.DropdownItem onClick={logout} ><img src="/logout.png" alt="로그아웃" />로그아웃</S.DropdownItem>
+                                      {auth.role === "[ROLE_ADMIN]" && (
+                                        <S.DropdownItem onClick={() => navi("/admin")}><img src="/admin.png" alt="관리자" />관리자 페이지</S.DropdownItem>
+                                      )}
+                                </>
+                                )}
                             </S.DropdownMenu>
                         )}
                     </S.UserSection>
