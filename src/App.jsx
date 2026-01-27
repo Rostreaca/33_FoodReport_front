@@ -12,19 +12,21 @@ import MyInfo from './component/Member/MyInfo'
 import LikesList from './component/Member/LikesList'
 import ReviewManagement from './component/Member/ReviewManagement'
 import MemberWithdrawal from './component/Member/MemberWithdrawal'
+import ReviewList from './component/Review/ReviewList'
 
 function App() {
 
   return (
     <>
      <AuthProvider>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/admin/*" element={<Admin />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/mypage" element={<MyPage />}>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/reviews" element={<ReviewList />} />
+        <Route path="/admin/*" element={<Admin />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/mypage" element={<MyPage />}>
           <Route index element={<MyInfo />} />
           <Route path="info" element={<MyInfo />} />
           <Route path="likes" element={<LikesList />} />

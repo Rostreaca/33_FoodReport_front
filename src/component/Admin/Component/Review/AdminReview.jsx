@@ -62,13 +62,24 @@ const AdminReview = () => {
   };
 
   useEffect(() => {
-    // 전체 조회 useEffect
     if (searchText.trim()) {
+      // 공백을 제거하고 검색어가 있으면 부분조회
       reviewFindByKeyword(currentPage, searchText);
     } else {
+      // 전체 조회 useEffect
       reviewFindAll(currentPage);
     }
   }, [currentPage, searchText]);
+
+  const refreshReviews = () => { // 자식 콜백함수 새로고침용
+    if (searchText.trim()) {
+      // 공백을 제거하고 검색어가 있으면 부분조회
+      reviewFindByKeyword(currentPage, searchText);
+    } else {
+      // 전체 조회 useEffect
+      reviewFindAll(currentPage);
+    }
+  };
 
   return (
     <Container>
@@ -102,7 +113,11 @@ const AdminReview = () => {
         <ReviewList>
           {reviews.length > 0 ? (
             reviews.map((review, index) => (
-              <ReviewRow key={index} review={review} />
+              <ReviewRow
+                key={index}
+                review={review}
+                onStatusChange={refreshReviews}
+              />
             ))
           ) : (
             <EmptyStateMessage>게시물이 존재하지 않습니다</EmptyStateMessage>
