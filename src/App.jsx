@@ -15,6 +15,8 @@ import MemberWithdrawal from "./component/Member/MemberWithdrawal";
 import ReviewList from "./component/Review/ReviewList";
 import ProtectedRoute from "./component/ProtectedURL";
 import ReviewDetail from "./component/Review/ReviewDetail";
+import PlaceDetail from "./component/Place/PlaceDetail";
+import ErrorPage from "./component/common/ErrorPage/ErrorPage";
 
 function App() {
   return (
@@ -23,8 +25,10 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Main />} />
+          <Route path="/errorpage" element={<ErrorPage />} />
           <Route path="/reviews" element={<ReviewList />} />
           <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
+          <Route path="/places/:placeNo" element={<PlaceDetail />} />
           <Route
             path="/admin/*"
             element={

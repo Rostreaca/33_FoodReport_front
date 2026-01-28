@@ -6,30 +6,30 @@ import {
 } from 'lucide-react';
 
 import {
-    Container, Breadcrumb, Card, Title, UserInfo, ContentText, ImageWrapper, ReviewImage, ButtonGroup, ActionBtn, Stats, CommentSection,
+    Container, Breadcrumb, Card, Title, UserInfo, ContentText, ImageWrapper, PlaceImage, ButtonGroup, ActionBtn, Stats, CommentSection,
     CommentInputRow, OrangeBtn, CommentItem, CommentBody, DropdownMenu, DropdownItem,
     HeartButton,
     TagContainer,
     Tag
-} from './ReviewDetail.style.js';
+} from './PlaceDetail.style.js';
 import { publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 
-const ReviewDetail = () => {
+const PlaceDetail = () => {
     const { auth } = useContext(AuthContext);
 
-    const { reviewNo } = useParams();
+    const { placeNo } = useParams();
     const navi = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [review, setReview] = useState({});
+    const [place, setPlace] = useState({});
 
 
     useEffect(() => {
-        publicInstance.get(`/api/reviews/${reviewNo}`)
+        publicInstance.get(`/api/places/${placeNo}`)
             .then((res) => {
-                setReview(res.data.data);
+                setPlace(res.data.data);
             }).catch((err) => {
-                navi('/errorpage', {state : { code : 404, message : err.response.data.message}});
+                navi('/errorpage', {state : { code: 404 , message : err.response.data.message} });
             })
 
     }, []);
@@ -41,40 +41,40 @@ const ReviewDetail = () => {
                     <Home size={14} />
                 </div>
                 <ChevronRight size={12} />
-                <div className="link-item" onClick={() => navi('/reviews')}>
-                    리뷰 목록
+                <div className="link-item" onClick={() => navi('/places')}>
+                    맛집 목록
                 </div>
                 <ChevronRight size={12} />
                 <span>상세 조회</span>
             </Breadcrumb>
 
-            <Title style={{ marginBottom: '20px' }}>리뷰 조회</Title>
+            <Title style={{ marginBottom: '20px' }}>맛집 조회</Title>
 
             <Card>
-                <Title>{review.reviewTitle}</Title>
+                <Title>{place.placeTitle}</Title>
                 <UserInfo>
-                    <img src={review.profileImage || "../../../public/user.png"} alt="user" />
+                    <img src={place.profileImage || "../../../public/user.png"} alt="user" />
                     <div className="details">
-                        <span>{review.reviewWriter}</span>
-                        <small>{Math.ceil((Date.now() - new Date(review.createDate)) / (24 * 60 * 60 * 1000))}일 전</small>
+                        <span>{place.placeWriter}</span>
+                        <small>{Math.ceil((Date.now() - new Date(place.createDate)) / (24 * 60 * 60 * 1000))}일 전</small>
                     </div>
                 </UserInfo>
 
                 <ContentText>
-                    {review.reviewContent}
+                    {place.placeContent}
                 </ContentText>
 
-                {review?.reviewImages?.length > 0 && (
+                {place?.placeImages?.length > 0 && (
                     <ImageWrapper>
-                        {review.reviewImages.map((image) => (
-                            <ReviewImage key={image.imageNo} src={image?.changeName} alt="리뷰 이미지" />
+                        {place.placeImages.map((image) => (
+                            <PlaceImage key={image.imageNo} src={image?.changeName} alt="맛집 이미지" />
                         ))}
                     </ImageWrapper>
                 )}
 
-                {review?.tags?.length > 0 && (
+                {place?.tags?.length > 0 && (
                     <TagContainer>
-                        {review.tags.map((tag) => (
+                        {place.tags.map((tag) => (
                             <Tag key={tag.tagNo}>{tag?.tagTitle}</Tag>
                         ))}
                     </TagContainer>
@@ -87,13 +87,13 @@ const ReviewDetail = () => {
                             <ActionBtn orange style={{ marginRight: '8px' }}>수정</ActionBtn>
                             <ActionBtn orange>삭제</ActionBtn>
                         </div>
-                        <ActionBtn onClick={() => navi('/reviews')}>목록</ActionBtn>
+                        <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
                     ) : (
                         <>
                         <div>
                         </div>
-                        <ActionBtn onClick={() => navi('/reviews')}>목록</ActionBtn>
+                        <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
                     )
                     }
@@ -101,14 +101,14 @@ const ReviewDetail = () => {
 
                 <Stats>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Eye size={16} /> {review.viewCount}
+                        <Eye size={16} /> {place.viewCount}
                     </div>
                     {/* 메인 게시글: 좋아요 안 누른 상태 */}
                     <HeartButton active={false}>
-                        <Heart /> {review.likes}
+                        <Heart /> {place.likes}
                     </HeartButton>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <MessageSquare size={16} /> {review.reviewReplies?.length} 댓글
+                        <MessageSquare size={16} /> {place.placeReplies?.length} 댓글
                     </div>
                 </Stats>
             </Card>
@@ -126,7 +126,7 @@ const ReviewDetail = () => {
                     }
                 </CommentInputRow>
 
-                {review.reviewReplies?.length > 0 && review.reviewReplies.map((reply) => (
+                {place.placeReplies?.length > 0 && place.placeReplies.map((reply) => (
                     <CommentItem key={reply.replyNo}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <UserInfo style={{ marginBottom: '5px' }}>
@@ -163,4 +163,4 @@ const ReviewDetail = () => {
     );
 };
 
-export default ReviewDetail;
+export default PlaceDetail;

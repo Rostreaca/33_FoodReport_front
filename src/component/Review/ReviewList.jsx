@@ -53,7 +53,6 @@ const ReviewList = () => {
     const [sortBy, setSortBy] = useState("최신순");
     const [orderBy, setOrderBy] = useState("createDate");
     const [keyword, setKeyword] = useState("");
-    const [isSearched, setIsSearched] = useState(false);
     const [pageInfo, setPageInfo] = useState({
         currentPage: 1,
         startPage: 1,
@@ -74,8 +73,7 @@ const ReviewList = () => {
             })
     }, []);
 
-    useEffect(() => {
-
+    const findAllReviews = () => {
         publicInstance.get(`/api/reviews?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}`)
             .then((res) => {
                 console.log(res.data.data);
@@ -89,10 +87,11 @@ const ReviewList = () => {
             }).catch((err) => {
                 console.error(err);
             })
+    }
 
-        setIsSearched(false);
-
-    }, [pageInfo.currentPage, orderBy, isSearched, tagNo]);
+    useEffect(() => {
+        findAllReviews();
+    }, [pageInfo.currentPage, orderBy, tagNo]);
 
     const ICONS = {
         user: "../../../public/user.png",
@@ -197,15 +196,19 @@ const ReviewList = () => {
                 {reviews[0] !== undefined ?
                     (<PaginationWrapper>
                         <LeftSpacer />
+                        { pageInfo.currentPage !== pageInfo.maxPage ?
                         <PaginationContainer>
                             <Pagination
                                 pageInfo={pageInfo}
                                 onPageChange={(page) => setPageInfo({ ...pageInfo, currentPage: page })}
                             />
                         </PaginationContainer>
+                        :
+                        <LeftSpacer />
+                        }
                         <SearchContainer>
                             <SearchInput>
-                                <SearchButton onClick={() => setIsSearched(true)}>
+                                <SearchButton onClick={() => findAllReviews()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
                                 <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
