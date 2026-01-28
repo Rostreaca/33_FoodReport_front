@@ -8,7 +8,7 @@ import {
     Bell,             // 공지 사항 관리
     LogOut,          // 로그아웃
     ChevronRight,
-    Home
+    DollarSign,
 } from 'lucide-react';
 
 import {
@@ -25,10 +25,11 @@ import { useNavigate } from 'react-router-dom';
 const MENU_ITEMS = [
     { id: 1, label: '대시보드', icon: LayoutDashboard, path: '/admin' },
     { id: 2, label: '회원 관리', icon: Users, path: '/admin/members' },
-    { id: 3, label: '맛집(단장) 관리', icon: Store, path: '/admin/restaurants' },
+    { id: 3, label: '사업자 관리', icon: DollarSign, path: '/admin/business' },
     { id: 4, label: '해시태그 관리', icon: Hash, path: '/admin/hashtags' },
     { id: 5, label: '리뷰 관리', icon: MessageSquare, path: '/admin/reviews' },
-    { id: 6, label: '공지 사항 관리', icon: Bell, path: '/admin/notices' }
+    { id: 6, label: '맛집(단장) 관리', icon: Store, path: '/admin/restaurants' },
+    { id: 7, label: '공지 사항 관리', icon: Bell, path: '/admin/notices' }
 ];
 
 const SideBar = () => {
