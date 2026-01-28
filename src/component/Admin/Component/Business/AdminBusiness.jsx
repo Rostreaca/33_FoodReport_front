@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   TableWrapper,
@@ -16,47 +16,37 @@ import {
   StatusBadge,
   HeaderSection,
   Breadcrumb,
-  WelcomeMessage
+  WelcomeMessage,
+  PageWrapper,
 } from "./AdminBusiness.style";
 import { DollarSign } from "lucide-react";
+import Pagination from "../../../common/Paging/Pagination";
+import { authInstance } from "../../../api/reqService";
 
 const AdminBusiness = () => {
-  // 샘플 데이터
-  const restaurants = [
-    {
-      restaurantNo: 5,
-      businessNo: "000-00-00000",
-      nickname: "유저05",
-      email: "user05@example.com",
-      profileImage: null, // 이미지 URL 또는 null
-      restaurantName: "또보겠지떡볶이",
-      address: "몽글몽글청계",
-      status: "Y",
-      createDate: "2023-03-02T03:48:27.000+00:00",
-    },
-    {
-      restaurantNo: 1,
-      businessNo: "123-45-67890",
-      nickname: "유저05",
-      email: "user05@example.com",
-      profileImage: null,
-      restaurantName: "삼삼뼛국",
-      address: "논현동",
-      status: "Y",
-      createDate: "2023-03-02T03:48:27.000+00:00",
-    },
-    {
-      restaurantNo: 2,
-      businessNo: "111-22-33333",
-      nickname: "사장님01",
-      email: "owner01@example.com",
-      profileImage: null,
-      restaurantName: "맛있는집",
-      address: "강남구 테헤란로",
-      status: "N",
-      createDate: "2025-07-05T11:34:04.000+00:00",
-    },
-  ];
+  const [restaurants, setRestaurants] = useState([]);
+  const [pageInfo, setPageInfo] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const getRestaurant = (page = 1) => {
+    authInstance
+      .get(`/api/admin/members/place?page=${page}`)
+      .then((res) => {
+        console.log(res);
+        const restaurant = res.data.data.restaurant;
+        const pages = res.data.data.pageInfo;
+        setCurrentPage(page);
+        setPageInfo(pages);
+        setRestaurants([...restaurant]);
+      })
+      .catch((err) => {
+        console.log("업장 목록 조회 실패 : ", err);
+      });
+  };
+
+  useEffect(() => {
+    getRestaurant(1);
+  }, []);
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -70,6 +60,10 @@ const AdminBusiness = () => {
     } else {
       return <StatusBadge $isStatus={false}>취소</StatusBadge>;
     }
+  };
+
+  const handlePageChange = (page) => {
+    getRestaurant(page);
   };
 
   return (
@@ -95,39 +89,59 @@ const AdminBusiness = () => {
             </Tr>
           </thead>
           <tbody>
-            {restaurants.map((restaurant) => (
-              <Tr key={restaurant.restaurantNo}>
-                <Td>
-                  <UserInfo>
-                    <Avatar>
-                      {restaurant.profileImage ? (
-                        <img src={restaurant.profileImage} alt={restaurant.nickname} />
-                      ) : (
-                        restaurant.nickname?.charAt(0) || "U"
-                      )}
-                    </Avatar>
-                    <UserDetail>
-                      <Nickname>{restaurant.nickname}</Nickname>
-                    </UserDetail>
-                  </UserInfo>
+            {restaurants.length === 0 ? (
+              <Tr>
+                <Td
+                  colSpan="7"
+                  style={{ textAlign: "center", padding: "40px" }}
+                >
+                  등록된 업장이 없습니다.
                 </Td>
-                <Td>{restaurant.businessNo}</Td>
-                <Td>
-                  <Email>{restaurant.email}</Email>
-                </Td>
-                <Td>{restaurant.restaurantName}</Td>
-                <Td>
-                  <Address>{restaurant.address}</Address>
-                </Td>
-                <Td>
-                  <DateText>{formatDate(restaurant.createDate)}</DateText>
-                </Td>
-                <Td>{getStatusBadge(restaurant.status)}</Td>
               </Tr>
-            ))}
+            ) : (
+              restaurants.map((restaurant) => (
+                <Tr key={restaurant.restaurantNo}>
+                  <Td>
+                    <UserInfo>
+                      <Avatar>
+                        {restaurant.profileImage ? (
+                          <img
+                            src={restaurant.profileImage}
+                            alt={restaurant.nickname}
+                          />
+                        ) : (
+                          restaurant.nickname?.charAt(0) || "U"
+                        )}
+                      </Avatar>
+                      <UserDetail>
+                        <Nickname>{restaurant.nickname}</Nickname>
+                      </UserDetail>
+                    </UserInfo>
+                  </Td>
+                  <Td>{restaurant.businessNo}</Td>
+                  <Td>
+                    <Email>{restaurant.memberId}</Email>
+                  </Td>
+                  <Td>{restaurant.restaurantName}</Td>
+                  <Td>
+                    <Address>{restaurant.address}</Address>
+                  </Td>
+                  <Td>
+                    <DateText>{formatDate(restaurant.createDate)}</DateText>
+                  </Td>
+                  <Td>{getStatusBadge(restaurant.status)}</Td>
+                </Tr>
+              ))
+            )}
           </tbody>
         </Table>
       </TableWrapper>
+      <PageWrapper>
+        <span>
+          페이지 총 {pageInfo.boardLimit}개 중 {pageInfo.listCount}개
+        </span>
+        <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+      </PageWrapper>
     </Container>
   );
 };
