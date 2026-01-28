@@ -14,6 +14,7 @@ import ReviewManagement from "./component/Member/ReviewManagement";
 import MemberWithdrawal from "./component/Member/MemberWithdrawal";
 import ReviewList from "./component/Review/ReviewList";
 import ProtectedRoute from "./component/ProtectedURL";
+import ReviewDetail from "./component/Review/ReviewDetail";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/reviews" element={<ReviewList />} />
+          <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
           <Route
             path="/admin/*"
             element={

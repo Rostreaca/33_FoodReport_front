@@ -40,11 +40,14 @@ import Pagination from "../common/Paging/Pagination";
 import { ChevronDown, ChevronRight, ThumbsUp, Eye, Search, Image } from "lucide-react";
 import axios from "axios";
 import { publicInstance } from "../api/reqService";
+import { useNavigate } from "react-router-dom";
 
 // 카드 이미지 경로 - 나중에 실제 이미지로 교체
 const CARD_PLACEHOLDER = "../../../public/card.png";
 
 const ReviewList = () => {
+
+    const navi = useNavigate();
     const [activeTag, setActiveTag] = useState(null);
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState("최신순");
@@ -152,7 +155,7 @@ const ReviewList = () => {
 
                 <ReviewGrid>
                     {reviews[0] !== undefined ? reviews.map((review, index) => (
-                        <ReviewCard key={index} onClick={() => alert(`${review.reviewNo}번 페이지 로 이동`)}>
+                        <ReviewCard key={index} onClick={() => navi(`/reviews/${review.reviewNo}`)}>
                             <CardImageArea>
                                 <CardImage src={review.reviewImages[0] === undefined ? CARD_PLACEHOLDER : review.reviewImages[0].changeName} alt={review.reviewTitle} />
                                 <CardCategory>#{review.tags[0] === undefined ? '태그없음' : review.tags[0].tagTitle}</CardCategory>
