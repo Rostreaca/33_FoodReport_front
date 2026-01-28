@@ -14,7 +14,7 @@ import ErrorIconImg from '../../../../public/logo.png';
 
 
 
-const NotFound = () => {
+const ErrorPage = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -23,10 +23,10 @@ const NotFound = () => {
     <Container>
       <ContentBox>
         <Icon src={ErrorIconImg} alt="Error Icon" />
-        <ErrorCode>404 Error</ErrorCode>
+        <ErrorCode>{ location.state.code || '400' } Error</ErrorCode>
         <ErrorMessage>오류가 발생했어요!</ErrorMessage>
         <Description>
-          { location.state }<br />
+          { location.state.message || '문제가 발생했습니다.' }<br />
           문제가 지속되면 고객센터에 문의해주세요.
         </Description>
         <HomeButton onClick={() => navigate('/')}>
@@ -37,4 +37,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default ErrorPage;

@@ -29,7 +29,7 @@ const ReviewDetail = () => {
             .then((res) => {
                 setReview(res.data.data);
             }).catch((err) => {
-                navi('/notfound', {state : err.response.data.message});
+                navi('/errorpage', {state : { code : 404, message : err.response.data.message}});
             })
 
     }, []);
