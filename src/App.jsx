@@ -13,6 +13,7 @@ import LikesList from './component/Member/LikesList'
 import ReviewManagement from './component/Member/ReviewManagement'
 import MemberWithdrawal from './component/Member/MemberWithdrawal'
 import ReviewList from './component/Review/ReviewList'
+import ReviewDetail from './component/Review/ReviewDetail'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/reviews" element={<ReviewList />} />
+        <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
