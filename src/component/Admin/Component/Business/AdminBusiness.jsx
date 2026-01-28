@@ -26,16 +26,14 @@ import { authInstance } from "../../../api/reqService";
 const AdminBusiness = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [pageInfo, setPageInfo] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
 
   const getRestaurant = (page = 1) => {
     authInstance
-      .get(`/api/admin/members/place?page=${page}`)
+      .get(`/api/admin/members/places?page=${page}`)
       .then((res) => {
         console.log(res);
         const restaurant = res.data.data.restaurant;
         const pages = res.data.data.pageInfo;
-        setCurrentPage(page);
         setPageInfo(pages);
         setRestaurants([...restaurant]);
       })
@@ -135,13 +133,19 @@ const AdminBusiness = () => {
             )}
           </tbody>
         </Table>
+
+        {restaurants.length === 0 ? (
+          <PageWrapper>
+          </PageWrapper>
+        ) : (
+          <PageWrapper>
+            <span>
+              페이지 총 {pageInfo.boardLimit}개 중 {pageInfo.listCount}개
+            </span>
+            <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+          </PageWrapper>
+        )}
       </TableWrapper>
-      <PageWrapper>
-        <span>
-          페이지 총 {pageInfo.boardLimit}개 중 {pageInfo.listCount}개
-        </span>
-        <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
-      </PageWrapper>
     </Container>
   );
 };
