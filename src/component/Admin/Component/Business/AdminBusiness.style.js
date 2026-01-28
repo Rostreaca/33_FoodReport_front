@@ -277,3 +277,17 @@ export const MenuItem = styled.button`
     border-bottom: 1px solid #f3f4f6;
   }
 `;
+
+export const PageWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #6b7280;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+`;

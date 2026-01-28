@@ -220,7 +220,7 @@ const AdminHashtag = () => {
       {/* 페이징 처리하는 영역 */}
       <PageWrapper>
         <span>
-          페이지 {pageInfo.listCount}개 중 총 {pageInfo.boardLimit}개
+          페이지 {pageInfo.boardLimit}개 중 총 {pageInfo.listCount}개
         </span>
         <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
       </PageWrapper>
