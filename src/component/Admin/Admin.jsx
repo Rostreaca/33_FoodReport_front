@@ -6,6 +6,7 @@ import AdminReview from "./Component/Review/AdminReview";
 import AdminHashtag from "./Component/Hashtag/AdminHashtag";
 import Layout from "./Layout/Layout";
 import { Routes, Route } from "react-router-dom";
+import AdminBusiness from "./Component/Business/AdminBusiness"
 
 const Admin = () => {
     return (
@@ -18,6 +19,7 @@ const Admin = () => {
                     <Route path="/restaurants" element={<AdminPlace />}/>
                     <Route path="/reviews" element={<AdminReview />}/>
                     <Route path="/hashtags" element={<AdminHashtag />}/>
+                    <Route path="/business" element={<AdminBusiness />}/>
                 </Routes>
         </Layout>
     )
