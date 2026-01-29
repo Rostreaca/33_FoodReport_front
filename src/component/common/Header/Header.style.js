@@ -65,7 +65,19 @@ export const SearchWrapper = styled.div`
     display: none;
   }
 `;
+export const SearchButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  &:hover svg {
+    stroke: #374151;
+  }
+`;
 export const SearchIcon = styled.div`
   position: absolute;
   left: 1rem;
@@ -73,7 +85,6 @@ export const SearchIcon = styled.div`
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  pointer-events: none;
 
   img {
     width: 25px;

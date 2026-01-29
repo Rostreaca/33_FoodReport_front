@@ -106,14 +106,14 @@ export const ActionBtn = styled.button`
   transition: all 0.2s ease;
   
   /* 주황색 버튼 (수정/삭제) */
-  background: ${props => props.orange ? '#fff1ed' : 'white'};
-  color: ${props => props.orange ? '#ff6b35' : '#333'};
-  border: ${props => props.orange ? 'none' : '1px solid #dee2e6'};
+  background: ${props => props.$orange ? '#fff1ed' : 'white'};
+  color: ${props => props.$orange ? '#ff6b35' : '#333'};
+  border: ${props => props.$orange ? 'none' : '1px solid #dee2e6'};
 
   &:hover {
-    background: ${props => props.orange ? '#ff6b35' : '#f8f9fa'};
-    color: ${props => props.orange ? 'white' : '#000'};
-    border-color: ${props => props.orange ? '#ff6b35' : '#adb5bd'};
+    background: ${props => props.$orange ? '#ff6b35' : '#f8f9fa'};
+    color: ${props => props.$orange ? 'white' : '#000'};
+    border-color: ${props => props.$orange ? '#ff6b35' : '#adb5bd'};
   }
 `;
 
@@ -208,12 +208,12 @@ export const HeartButton = styled.div`
   gap: 5px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: ${props => props.active ? '#ff4d4f' : '#666'};
+  color: ${props => props.$active ? '#ff4d4f' : '#666'};
 
   svg {
     width: 16px;
     height: 16px;
-    fill: ${props => props.active ? '#ff4d4f' : 'transparent'}; 
+    fill: ${props => props.$active ? '#ff4d4f' : 'transparent'}; 
     transition: transform 0.2s ease;
   }
 
@@ -221,7 +221,7 @@ export const HeartButton = styled.div`
     color: #ff4d4f;
     svg {
       transform: scale(1.2); 
-      fill: ${props => props.active ? '#ff4d4f' : '#ffccc7'}; 
+      fill: ${props => props.$active ? '#ff4d4f' : '#ffccc7'}; 
     }
   }
 `;

@@ -29,7 +29,7 @@ const ReviewDetail = () => {
             .then((res) => {
                 setReview(res.data.data);
             }).catch((err) => {
-                navi('/errorpage', {state : { code : 404, message : err.response.data.message}});
+                navi('/errorpage', {state : { code : 404 , message : err.response.data.message}});
             })
 
     }, []);
@@ -84,8 +84,8 @@ const ReviewDetail = () => {
                     {auth.isAuthenticated? (
                         <>
                         <div>
-                            <ActionBtn orange style={{ marginRight: '8px' }}>수정</ActionBtn>
-                            <ActionBtn orange>삭제</ActionBtn>
+                            <ActionBtn $orange style={{ marginRight: '8px' }}>수정</ActionBtn>
+                            <ActionBtn $orange>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/reviews')}>목록</ActionBtn>
                         </>
@@ -104,7 +104,7 @@ const ReviewDetail = () => {
                         <Eye size={16} /> {review.viewCount}
                     </div>
                     {/* 메인 게시글: 좋아요 안 누른 상태 */}
-                    <HeartButton active={false}>
+                    <HeartButton $active={false}>
                         <Heart /> {review.likes}
                     </HeartButton>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -153,7 +153,7 @@ const ReviewDetail = () => {
                             ): <></>}
                         </div>
                         <CommentBody>{reply.replyContent}</CommentBody>
-                        <HeartButton active={true}>
+                        <HeartButton $active={true}>
                             <Heart /> {reply.likes}
                         </HeartButton>
                     </CommentItem>

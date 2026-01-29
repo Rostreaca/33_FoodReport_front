@@ -5,15 +5,15 @@ import {
     CategorySection,
     TagContainer,
     Tag,
-    ReviewSection,
-    ReviewHeader,
+    PlaceSection,
+    PlaceHeader,
     SortDropdownContainer,
     SortDropdown,
     SortDropdownMenu,
     SortOption,
     WriteButton,
-    ReviewGrid,
-    ReviewCard,
+    PlaceGrid,
+    PlaceCard,
     CardImageArea,
     CardImage,
     CardCategory,
@@ -35,7 +35,7 @@ import {
     SearchContainer,
     LeftSpacer,
     BackgroundImg
-} from "./ReviewList.style";
+} from "./PlaceList.style";
 import Pagination from "../common/Paging/Pagination";
 import { ChevronDown, ChevronRight, ThumbsUp, Eye, Search, Image } from "lucide-react";
 import axios from "axios";
@@ -45,7 +45,7 @@ import { useNavigate } from "react-router-dom";
 // 카드 이미지 경로 - 나중에 실제 이미지로 교체
 const CARD_PLACEHOLDER = "../../public/card.png";
 
-const ReviewList = () => {
+const PlaceList = () => {
 
     const navi = useNavigate();
     const [activeTag, setActiveTag] = useState(null);
@@ -62,7 +62,7 @@ const ReviewList = () => {
     const [tags, setTags] = useState([]);
     const [tagNo, setTagNo] = useState(0);
 
-    const [reviews, setReviews] = useState([]);
+    const [places, setPlaces] = useState([]);
 
     useEffect(() => {
         publicInstance.get(`/api/global/tags`)
@@ -73,8 +73,8 @@ const ReviewList = () => {
             })
     }, []);
 
-    const findAllReviews = () => {
-        publicInstance.get(`/api/reviews?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}`)
+    const findAllPlaces = () => {
+        publicInstance.get(`/api/places?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}`)
             .then((res) => {
                 setPageInfo({
                     currentPage: res.data.data.pageInfo.currentPage,
@@ -82,14 +82,14 @@ const ReviewList = () => {
                     endPage: res.data.data.pageInfo.endPage,
                     maxPage: res.data.data.pageInfo.maxPage
                 });
-                setReviews(res.data.data.reviews);
+                setPlaces(res.data.data.places);
             }).catch((err) => {
                 console.error(err);
             })
     }
 
     useEffect(() => {
-        findAllReviews();
+        findAllPlaces();
     }, [pageInfo.currentPage, orderBy, tagNo]);
 
     const ICONS = {
@@ -132,9 +132,9 @@ const ReviewList = () => {
                 </TagContainer>
             </CategorySection>
 
-            <ReviewSection>
-                <SectionTitle>리뷰 목록</SectionTitle>
-                <ReviewHeader>
+            <PlaceSection>
+                <SectionTitle>추천 맛집</SectionTitle>
+                <PlaceHeader>
                     <SortDropdownContainer>
                         <SortDropdown onClick={() => setSortOpen(!sortOpen)}>
                             {sortBy} <ChevronDown size={16} />
@@ -149,38 +149,38 @@ const ReviewList = () => {
                         </SortDropdownMenu>
                     </SortDropdownContainer>
                     <WriteButton>글쓰기</WriteButton>
-                </ReviewHeader>
+                </PlaceHeader>
 
-                <ReviewGrid>
-                    {reviews[0] !== undefined ? reviews.map((review, index) => (
-                        <ReviewCard key={index} onClick={() => navi(`/reviews/${review.reviewNo}`)}>
+                <PlaceGrid>
+                    {places[0] !== undefined ? places.map((place, index) => (
+                        <PlaceCard key={index} onClick={() => navi(`/places/${place.placeNo}`)}>
                             <CardImageArea>
-                                <CardImage src={review.reviewImages[0] === undefined ? CARD_PLACEHOLDER : review.reviewImages[0].changeName} alt={review.reviewTitle} />
-                                <CardCategory>#{review.tags[0] === undefined ? '태그없음' : review.tags[0].tagTitle}</CardCategory>
+                                <CardImage src={place.placeImages[0] === undefined ? CARD_PLACEHOLDER : place.placeImages[0].changeName} alt={place.placeTitle} />
+                                <CardCategory>#{place.tags[0] === undefined ? '태그없음' : place.tags[0].tagTitle}</CardCategory>
                             </CardImageArea>
                             <CardContent>
                                 <CardTitleRow>
-                                    <CardTitle>{review.reviewTitle}</CardTitle>
+                                    <CardTitle>{place.placeTitle}</CardTitle>
                                     <CardStats>
                                         <StatItem>
-                                            <ThumbsUp size={14} /> {review.likes}
+                                            <ThumbsUp size={14} /> {place.likes}
                                         </StatItem>
                                         <StatItem>
-                                            <Eye size={14} /> {review.viewCount}
+                                            <Eye size={14} /> {place.viewCount}
                                         </StatItem>
                                     </CardStats>
                                 </CardTitleRow>
-                                <CardDescription>{review.reviewContent}</CardDescription>
+                                <CardDescription>{place.placeContent}</CardDescription>
                                 <CardFooter>
                                     <Author>
                                         <AuthorAvatar>
-                                            <Icon src={review.profileImage || ICONS.user} alt="" />
+                                            <Icon src={place.profileImage || ICONS.user} alt="" />
                                         </AuthorAvatar>
-                                        {review.reviewWriter !== null ? review.reviewWriter : '탈퇴유저'}
+                                        {place.placeWriter !== null ? place.placeWriter : '탈퇴유저'}
                                     </Author>
                                 </CardFooter>
                             </CardContent>
-                        </ReviewCard>
+                        </PlaceCard>
                     )) : (<>
                         <LeftSpacer />
                         <BackgroundImg src="../../../public/logo.png" alt="foodReport로고" />
@@ -190,9 +190,9 @@ const ReviewList = () => {
                     </>
                     )
                     }
-                </ReviewGrid>
+                </PlaceGrid>
 
-                {reviews[0] !== undefined ?
+                {places[0] !== undefined ?
                     (<PaginationWrapper>
                         <LeftSpacer />
                         { pageInfo.startPage !== pageInfo.maxPage ?
@@ -207,7 +207,7 @@ const ReviewList = () => {
                         }
                         <SearchContainer>
                             <SearchInput>
-                                <SearchButton onClick={() => findAllReviews()}>
+                                <SearchButton onClick={() => findAllPlaces()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
                                 <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
@@ -218,7 +218,7 @@ const ReviewList = () => {
                         <LeftSpacer />
                         <SearchContainer>
                             <SearchInput>
-                                <SearchButton onClick={() => findAllReviews()}>
+                                <SearchButton onClick={() => findAllPlaces()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
                                 <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
@@ -226,10 +226,10 @@ const ReviewList = () => {
                         </SearchContainer>
                         </PaginationWrapper>
                 }
-            </ReviewSection>
+            </PlaceSection>
         </Container>
     );
 
 }
 
-export default ReviewList;
+export default PlaceList;
