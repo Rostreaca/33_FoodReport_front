@@ -49,7 +49,7 @@ export const MainContentArea = styled.div`
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    overflow-x: auto;
+    width: 100%;
     
     @media (max-width: 768px) {
         padding: 16px;
@@ -59,7 +59,7 @@ export const MainContentArea = styled.div`
 
 export const TableHeader = styled.div`
     display: grid;
-    grid-template-columns: 50px 250px 150px 100px 130px 100px 60px;
+    grid-template-columns: 60px 1.5fr 1.8fr 0.8fr 1fr 0.8fr 0.8fr 60px;
     align-items: center;
     padding: 16px 0;
     border-bottom: 2px solid #e5e7eb;
@@ -76,6 +76,10 @@ export const TableHeader = styled.div`
 export const TableHeaderCell = styled.div`
     display: flex;
     align-items: center;
+    
+    &:nth-child(6), &:nth-child(7), &:nth-child(8) {
+        justify-content: center;
+    }
     
     input[type="checkbox"] {
         width: 18px;

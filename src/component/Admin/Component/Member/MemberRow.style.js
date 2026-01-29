@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const MemberRowContainer = styled.div`
     display: grid;
-    grid-template-columns: 50px 250px 150px 100px 130px 100px 60px;
+    grid-template-columns: 60px 1.5fr 1.8fr 0.8fr 1fr 0.8fr 0.8fr 60px;
     align-items: center;
     padding: 16px 0;
     border-bottom: 1px solid #e5e7eb;
@@ -28,21 +28,17 @@ export const MemberRowContainer = styled.div`
     }
 `;
 
-export const MemberInfoCell = styled.div`
+export const AvatarCell = styled.div`
     display: flex;
     align-items: center;
-    gap: 12px;
-    
-    @media (max-width: 768px) {
-        width: 100%;
-    }
+    justify-content: center;
 `;
 
 export const Avatar = styled.div`
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #fcb00b 0%, #f7573b 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,10 +55,16 @@ export const Avatar = styled.div`
     }
 `;
 
-export const MemberDetails = styled.div`
+export const MemberInfoCell = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+    
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 export const MemberName = styled.div`
@@ -74,69 +76,65 @@ export const MemberName = styled.div`
 export const MemberEmail = styled.div`
     font-size: 12px;
     color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
-export const PhoneInfoCell = styled.div`
-    font-size: 14px;
+export const ContactInfoCell = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
     color: #374151;
+    min-width: 0;
+    overflow: hidden;
     
     .mobile-label {
         display: none;
     }
     
     @media (max-width: 768px) {
-        font-size: 13px;
         width: 100%;
         padding: 8px 0;
         border-top: 1px solid #f3f4f6;
         margin-top: 4px;
-        display: flex;
-        gap: 8px;
         
         .mobile-label {
             display: inline;
             font-weight: 600;
             color: #6b7280;
-            min-width: 80px;
-        }
-        
-        .mobile-value {
-            flex: 1;
+            margin-bottom: 4px;
         }
     }
 `;
 
+export const PhoneNumber = styled.div`
+    color: #374151;
+    white-space: nowrap;
+`;
+
+export const Introduce = styled.div`
+    color: #6b7280;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    
+    @media (max-width: 768px) {
+        white-space: normal;
+        word-break: break-word;
+    }
+`;
+
 export const ReviewCountCell = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
     font-size: 14px;
     font-weight: 500;
     color: #1a1a1a;
     
     .mobile-label {
         display: none;
-    }
-    
-    .mobile-value {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    div {
-        display: flex;
-        flex-direction: column;
-        cursor: pointer;
-        
-        svg {
-            color: #9ca3af;
-            transition: color 0.2s;
-            
-            &:hover {
-                color: #FF6B35;
-            }
-        }
     }
     
     @media (max-width: 768px) {
@@ -194,6 +192,7 @@ export const DateCell = styled.div`
 export const StatusCell = styled.div`
     display: flex;
     justify-content: center;
+    align-items: center;
     
     .mobile-label {
         display: none;
@@ -205,7 +204,6 @@ export const StatusCell = styled.div`
         border-top: 1px solid #f3f4f6;
         margin-top: 4px;
         justify-content: flex-start;
-        align-items: center;
         gap: 8px;
         
         .mobile-label {
@@ -224,6 +222,50 @@ export const StatusBadge = styled.span`
     font-weight: 500;
     background-color: ${props => props.$isActive ? '#d1fae5' : '#fee2e2'};
     color: ${props => props.$isActive ? '#065f46' : '#991b1b'};
+`;
+
+export const RoleCell = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .mobile-label {
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        width: 100%;
+        padding: 8px 0;
+        border-top: 1px solid #f3f4f6;
+        margin-top: 4px;
+        justify-content: flex-start;
+        gap: 8px;
+        
+        .mobile-label {
+            display: inline;
+            font-weight: 600;
+            color: #6b7280;
+            min-width: 80px;
+        }
+    }
+`;
+
+export const RoleBadge = styled.span`
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: ${props => {
+        if (props.$role === 'ROLE_ADMIN') return '#FF6B35';
+        if (props.$role === 'ROLE_OWNER') return '#FFE5DC';
+        return '#f3f4f6';
+    }};
+    color: ${props => {
+        if (props.$role === 'ROLE_ADMIN') return '#ffffff';
+        if (props.$role === 'ROLE_OWNER') return '#FF6B35';
+        return '#6b7280';
+    }};
+    display: inline-block;
 `;
 
 export const OptionsCell = styled.div`
@@ -290,11 +332,16 @@ export const OptionsMenuItem = styled.div`
         background-color: #f3f4f6;
     }
     
-    &:first-child {
+    &:nth-child(1) {
         color: #059669;
     }
     
-    &:last-child {
+    &:nth-child(2) {
         color: #dc2626;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    &:nth-child(3), &:nth-child(4), &:nth-child(5) {
+        font-size: 13px;
     }
 `;
