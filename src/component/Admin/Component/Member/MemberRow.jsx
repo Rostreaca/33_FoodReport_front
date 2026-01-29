@@ -86,7 +86,18 @@ const MemberRow = ({ member, onStatusChange }) => {
   };
 
   const handleRoleChange = (newRole) => {
-    setCurrentRole(newRole);
+    const memberNo = member.memberNo;
+    authInstance
+      .put(`/api/admin/members/role/${memberNo}`, { role: newRole })
+      .then((res) => {
+        showToast(res.data.message, "success");
+        setCurrentRole(newRole);
+      })
+      .catch((err) => {
+        console.log(err);
+        showToast("비활성화된 회원은 역할을 변경할 수 없습니다!", "error");
+      })
+
     setIsOptionsOpen(false);
   };
 
@@ -97,6 +108,7 @@ const MemberRow = ({ member, onStatusChange }) => {
       case "ROLE_OWNER":
         return "사장님";
       default:
+        "ROLE_USER";
         return "사용자";
     }
   };
@@ -159,9 +171,14 @@ const MemberRow = ({ member, onStatusChange }) => {
       </RoleCell>
 
       <OptionsCell>
-        <OptionsButton onClick={toggleOptions}>
-          <MoreVertical size={18} />
-        </OptionsButton>
+        {member.role !== "ROLE_ADMIN" ? (
+          <OptionsButton onClick={toggleOptions}>
+            <MoreVertical size={18} />
+          </OptionsButton>
+        ) : (
+          <></>
+        )}
+
         {isOptionsOpen && (
           <OptionsMenu>
             <OptionsMenuItem onClick={handleActivate}>
@@ -169,9 +186,6 @@ const MemberRow = ({ member, onStatusChange }) => {
             </OptionsMenuItem>
             <OptionsMenuItem onClick={handleDeactivate}>
               X 비활성화하기
-            </OptionsMenuItem>
-            <OptionsMenuItem onClick={() => handleRoleChange("ROLE_ADMIN")}>
-              관리자로 변경
             </OptionsMenuItem>
             <OptionsMenuItem onClick={() => handleRoleChange("ROLE_OWNER")}>
               사장님으로 변경

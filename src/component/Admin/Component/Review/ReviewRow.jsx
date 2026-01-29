@@ -44,7 +44,6 @@ const ReviewRow = ({ review, onStatusChange }) => {
       authInstance
         .put(`/api/admin/reviews/${review.reviewNo}`)
         .then((res) => {
-          console.log(res);
           onStatusChange();
           showToast(res.data.message, "success");
         })
@@ -64,7 +63,6 @@ const ReviewRow = ({ review, onStatusChange }) => {
       authInstance
         .delete(`/api/admin/reviews/${review.reviewNo}`)
         .then((res) => {
-          console.log(res);
           if (res.status === 204) {
             showToast("비활성화에 성공했습니다!", "success");
             onStatusChange();
