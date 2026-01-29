@@ -17,6 +17,10 @@ import ProtectedRoute from "./component/ProtectedURL";
 import ReviewDetail from "./component/Review/ReviewDetail";
 import PlaceDetail from "./component/Place/PlaceDetail";
 import ErrorPage from "./component/common/ErrorPage/ErrorPage";
+import SearchList from "./component/global/SearchList";
+import NoticeList from "./component/Notice/NoticeList";
+import PlaceUpdateForm from "./component/Place/PlaceUpdateForm";
+import PlaceList from "./component/Place/PlaceList";
 
 function App() {
   return (
@@ -28,7 +32,11 @@ function App() {
           <Route path="/errorpage" element={<ErrorPage />} />
           <Route path="/reviews" element={<ReviewList />} />
           <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
+          <Route path="/places" element={<PlaceList />} />
           <Route path="/places/:placeNo" element={<PlaceDetail />} />
+          <Route path="/places/updateform/:placeNo" element={<PlaceUpdateForm />} />
+          <Route path="/notices" element={<NoticeList />} />
+          <Route path="/searchlist" element={<SearchList />} />
           <Route
             path="/admin/*"
             element={
