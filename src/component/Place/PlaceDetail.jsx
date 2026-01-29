@@ -84,8 +84,8 @@ const PlaceDetail = () => {
                     {auth.isAuthenticated? (
                         <>
                         <div>
-                            <ActionBtn orange style={{ marginRight: '8px' }}>수정</ActionBtn>
-                            <ActionBtn orange>삭제</ActionBtn>
+                            <ActionBtn $orange style={{ marginRight: '8px' }}>수정</ActionBtn>
+                            <ActionBtn $orange>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
@@ -104,7 +104,7 @@ const PlaceDetail = () => {
                         <Eye size={16} /> {place.viewCount}
                     </div>
                     {/* 메인 게시글: 좋아요 안 누른 상태 */}
-                    <HeartButton active={false}>
+                    <HeartButton $active={false}>
                         <Heart /> {place.likes}
                     </HeartButton>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -153,7 +153,7 @@ const PlaceDetail = () => {
                             ): <></>}
                         </div>
                         <CommentBody>{reply.replyContent}</CommentBody>
-                        <HeartButton active={true}>
+                        <HeartButton $active={true}>
                             <Heart /> {reply.likes}
                         </HeartButton>
                     </CommentItem>
