@@ -82,3 +82,9 @@ export const ExpandedContent = styled.div`
   border-bottom: 1px solid #f3f4f6;
   white-space: pre-line; /* 줄바꿈 적용 */
 `;
+
+export const NoticeImg = styled.img`
+    max-width : 800px;
+    max-height : 600px;
+
+`;
