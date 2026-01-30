@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
+    memberNo: null,
     email: null,
     nickname: null,
     phone: null,
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   // 자동로그인 구현을 위한 useEffect
   useEffect(() => {
+    const memberNo = localStorage.getItem("memberNo");
     const email = localStorage.getItem("email");
     const nickname = localStorage.getItem("nickname");
     const phone = localStorage.getItem("phone")
@@ -23,8 +25,9 @@ export const AuthProvider = ({ children }) => {
     const refreshToken = localStorage.getItem("refreshToken");
     const role = localStorage.getItem("role");
 
-    if (email && nickname && phone && accessToken && refreshToken && role) {
+    if (memberNo && email && nickname && phone && accessToken && refreshToken && role) {
       setAuth({
+        memberNo,
         email,
         nickname,
         phone,
@@ -37,8 +40,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // 로그인에 성공했을 때 수행할 함수
-  const login = (email, nickname, phone, accessToken, refreshToken, role) => {
+  const login = (memberNo, email, nickname, phone, accessToken, refreshToken, role) => {
     setAuth({
+      memberNo,
       email,
       nickname,
       phone,
@@ -47,7 +51,8 @@ export const AuthProvider = ({ children }) => {
       role,
       isAuthenticated: true,
     });
-    
+
+      localStorage.setItem("memberNo", memberNo);
       localStorage.setItem("email", email);
       localStorage.setItem("nickname", nickname);
       localStorage.setItem("phone", phone);
@@ -58,6 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAuth({
+      memberNo: null,
       email: null,
       nickname: null,
       phone: null,
@@ -66,6 +72,8 @@ export const AuthProvider = ({ children }) => {
       role: null,
       isAuthenticated: false,
     });
+
+    localStorage.removeItem("memberNo");
     localStorage.removeItem("email");
     localStorage.removeItem("nickname");
     localStorage.removeItem("phone");

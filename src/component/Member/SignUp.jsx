@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import * as S from './SignUp.style';
-import axios from "axios";
+import { publicInstance } from '../api/reqService';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext'
 
@@ -16,7 +16,7 @@ const SignUp = () => {
         phone: '',
         profileImage: null
     });
-  
+
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -132,21 +132,16 @@ const SignUp = () => {
             return;
         }
             */
+        publicInstance.post("/api/members", { email, password, nickname, phone, })
 
-        axios.post("http://localhost:8080/api/members", {
-            email,
-            password,
-            nickname,
-            phone,
-        })
-        .then((result) => {
-            alert("회원가입 성공!");
-            console.log(result);
-            navigate('/');
-        })
-        .catch((error) => {
-            console.log(error);
-        })        
+            .then((result) => {
+                alert("회원가입 성공!");
+                console.log(result);
+                navigate('/');
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
         console.log('SignUp:', formData);
 

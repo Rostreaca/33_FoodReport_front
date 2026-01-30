@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './MyInfo.style';
+import { RegisterOwnerModal } from '../common/Modal/OwnerModal';
+import { ResetPasswordModal } from '../common/Modal/PasswordModal';
 
 const MyInfo = () => {
     const navigate = useNavigate();
@@ -13,6 +15,20 @@ const MyInfo = () => {
     });
     const [bioLength, setBioLength] = useState(21);
     const [saveChecked, setSaveChecked] = useState(false);
+    
+    // Modal 상태 관리
+    const [modals, setModals] = useState({
+        register: false,
+        password: false
+    });
+
+    const openModal = (modalName) => {
+        setModals(prev => ({ ...prev, [modalName]: true }));
+    };
+
+    const closeModal = (modalName) => {
+        setModals(prev => ({ ...prev, [modalName]: false }));
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,13 +68,11 @@ const MyInfo = () => {
     };
 
     const handleOwnerRegister = () => {
-        // TODO: 사장님 등록 페이지로 이동
-        console.log('Register as owner');
+        openModal('register');
     };
 
     const handlePasswordReset = () => {
-        // TODO: 비밀번호 재설정 페이지로 이동
-        console.log('Reset password');
+        openModal('password');
     };
 
     return (
@@ -163,6 +177,16 @@ const MyInfo = () => {
                 <S.SectionDescription>비밀번호를 변경합니다.</S.SectionDescription>
                 <S.SectionButton onClick={handlePasswordReset}>변경</S.SectionButton>
             </S.Section>
+
+            {/* Modal */}
+            <RegisterOwnerModal 
+                isOpen={modals.register} 
+                onClose={() => closeModal('register')} 
+            />
+            <ResetPasswordModal 
+                isOpen={modals.password} 
+                onClose={() => closeModal('password')} 
+            />
         </S.MyInfoContainer>
     );
 };
