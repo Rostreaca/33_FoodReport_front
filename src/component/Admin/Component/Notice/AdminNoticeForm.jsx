@@ -35,7 +35,8 @@ const AdminNoticeForm = () => {
     message: "",
     type: "error",
   });
-  const { noticeNo } = useParams();
+  const { noticeNo } = useParams(); // URL에서 noticeNo 가져오기
+  const isEditMode = !!noticeNo; // noticeNo가 있으면 수정 모드
 
   const handleImage = (e) => {
     const selectedFile = e.target.files[0];
