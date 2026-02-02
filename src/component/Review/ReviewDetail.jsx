@@ -53,7 +53,7 @@ const ReviewDetail = () => {
             <Card>
                 <Title>{review.reviewTitle}</Title>
                 <UserInfo>
-                    <img src={review.profileImage || "../../../public/user.png"} alt="user" />
+                    <img src={review.profileImage || "/user.png"} alt="user" />
                     <div className="details">
                         <span>{review.reviewWriter}</span>
                         <small>{Math.ceil((Date.now() - new Date(review.createDate)) / (24 * 60 * 60 * 1000))}일 전</small>
@@ -130,7 +130,7 @@ const ReviewDetail = () => {
                     <CommentItem key={reply.replyNo}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <UserInfo style={{ marginBottom: '5px' }}>
-                                <img src={reply.profileImage || "../../../public/user.png"} alt="user" />
+                                <img src={reply.profileImage || "/user.png"} alt="user" />
                                 <div className="details">
                                     <span>{reply.replyWriter} <small style={{ fontWeight: 400, marginLeft: '5px' }}>{Math.ceil((Date.now() - new Date(reply.createDate)) / (24 * 60 * 60 * 1000))}일 전</small></span>
                                     <small>손님</small>

@@ -21,7 +21,7 @@ const ErrorPage = () => {
   return (
     <Container>
       <ContentBox>
-        <Icon src='../../../../public/logo.png' alt="Error Icon" />
+        <Icon src='/logo.png' alt="Error Icon" />
         <ErrorCode>{ location?.state?.code || '400' } Error</ErrorCode>
         <ErrorMessage>오류가 발생했어요!</ErrorMessage>
         <Description>
