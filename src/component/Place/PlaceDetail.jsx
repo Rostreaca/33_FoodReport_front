@@ -53,7 +53,7 @@ const PlaceDetail = () => {
             <Card>
                 <Title>{place.placeTitle}</Title>
                 <UserInfo>
-                    <img src={place.profileImage || "../../../public/user.png"} alt="user" />
+                    <img src={place.profileImage || "/user.png"} alt="user" />
                     <div className="details">
                         <span>{place.placeWriter}</span>
                         <small>{Math.ceil((Date.now() - new Date(place.createDate)) / (24 * 60 * 60 * 1000))}일 전</small>
@@ -130,7 +130,7 @@ const PlaceDetail = () => {
                     <CommentItem key={reply.replyNo}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <UserInfo style={{ marginBottom: '5px' }}>
-                                <img src={reply.profileImage || "../../../public/user.png"} alt="user" />
+                                <img src={reply.profileImage || "/user.png"} alt="user" />
                                 <div className="details">
                                     <span>{reply.replyWriter} <small style={{ fontWeight: 400, marginLeft: '5px' }}>{Math.ceil((Date.now() - new Date(reply.createDate)) / (24 * 60 * 60 * 1000))}일 전</small></span>
                                     <small>손님</small>

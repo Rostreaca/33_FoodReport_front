@@ -42,8 +42,7 @@ import axios from "axios";
 import { publicInstance } from "../api/reqService";
 import { useNavigate } from "react-router-dom";
 
-// 카드 이미지 경로 - 나중에 실제 이미지로 교체
-const CARD_PLACEHOLDER = "../../public/card.png";
+const CARD_PLACEHOLDER = "/card.png";
 
 const PlaceList = () => {
 
@@ -93,7 +92,7 @@ const PlaceList = () => {
     }, [pageInfo.currentPage, orderBy, tagNo]);
 
     const ICONS = {
-        user: "../../../public/user.png",
+        user: "/user.png",
     };
 
 
@@ -183,7 +182,7 @@ const PlaceList = () => {
                         </PlaceCard>
                     )) : (<>
                         <LeftSpacer />
-                        <BackgroundImg src="../../../public/logo.png" alt="foodReport로고" />
+                        <BackgroundImg src="/logo.png" alt="foodReport로고" />
                         <br />
                         <LeftSpacer />
                         <SectionTitle>게시글이 존재하지 않습니다.</SectionTitle>

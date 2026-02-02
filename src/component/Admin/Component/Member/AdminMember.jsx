@@ -90,6 +90,14 @@ const AdminMember = () => {
     }
   }, [currentPage, searchText]);
 
+  const refreshMember = () => {
+    if(searchText.trim()) {
+        memberBindByKeyword(currentPage, searchText);
+    } else {
+        memberList(currentPage);
+    }
+  };
+  
   return (
     <Container>
       {/* 헤더 영역 */}
@@ -124,7 +132,7 @@ const AdminMember = () => {
         <MemberList>
           {members.length > 0 ? (
             members.map((member) => (
-              <MemberRow key={member.memberNo} member={member} />
+              <MemberRow key={member.memberNo} member={member} onStatusChange={refreshMember}/>
             ))
           ) : (
             <EmptyStateMessage>회원이 존재하지 않습니다</EmptyStateMessage>
