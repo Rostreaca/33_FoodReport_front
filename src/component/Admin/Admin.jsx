@@ -22,6 +22,7 @@ const Admin = () => {
                     <Route path="/hashtags" element={<AdminHashtag />}/>
                     <Route path="/business" element={<AdminBusiness />}/>
                     <Route path="/notices/form" element={<AdminNoticeForm />} />
+                    <Route path="/notices/form/:noticeNo" element={<AdminNoticeForm />} />
                 </Routes>
         </Layout>
     )
