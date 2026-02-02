@@ -48,10 +48,7 @@ const NoticeRow = ({ notice, onStatusChange }) => {
 
   const handleUpdate = (e) => {
     const noticeNo = notice.noticeNo;
-    navi(`/admin/notices/form/${noticeNo}`)
-
-
-
+    navi(`/admin/notices/form/${noticeNo}`, { state: { notice } });
     setIsOptionsOpen(false);
   };
 

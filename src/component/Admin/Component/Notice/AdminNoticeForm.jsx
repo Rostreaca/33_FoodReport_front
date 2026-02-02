@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronRight, Bell, ImageIcon, X } from "lucide-react";
+import { useNavigate, useParams, useLocation } from "react-router-dom"; // useLocation 추가
+import { authInstance } from "../../../api/reqService.js";
+import Toast from "../../../common/Toast/Toast.jsx";
 import {
   Container,
   Breadcrumb,
@@ -19,29 +22,42 @@ import {
   ButtonGroup,
   SubmitButton,
   CancelButton,
-} from "./AdminNoticeForm.style.js"; // 또는 실제 스타일 파일 경로
-import { useNavigate, useParams } from "react-router-dom";
-import { authInstance } from "../../../api/reqService.js";
-import Toast from "../../../common/Toast/Toast.jsx";
+} from "./AdminNoticeForm.style.js";
 
 const AdminNoticeForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+
   const navi = useNavigate();
+  const { noticeNo } = useParams();
+  const location = useLocation();
+  const isEditMode = !!noticeNo;
+
   const [toast, setToast] = useState({
     show: false,
     message: "",
     type: "error",
   });
-  const { noticeNo } = useParams(); // URL에서 noticeNo 가져오기
-  const isEditMode = !!noticeNo; // noticeNo가 있으면 수정 모드
+
+  // 수정 모드일 때 전달받은 데이터로 초기화
+  useEffect(() => {
+    if (isEditMode && location.state?.notice) {
+      const noticeData = location.state.notice;
+      setTitle(noticeData.noticeTitle || "");
+      setContent(noticeData.noticeContent || "");
+      console.log(noticeData);
+      // 기존 이미지가 있다면 미리보기 설정
+      if (noticeData.noticeImageUrl) {
+        setPreview(noticeData.noticeImageUrl);
+      }
+    }
+  }, [isEditMode, location.state]);
 
   const handleImage = (e) => {
     const selectedFile = e.target.files[0];
 
-    console.log(selectedFile);
     if (selectedFile) {
       const previewURL = URL.createObjectURL(selectedFile);
       setPreview(previewURL);
@@ -50,11 +66,10 @@ const AdminNoticeForm = () => {
   };
 
   const showToast = (message, type = "error") => {
-    // 알럿 대신 토스트
     setToast({ show: true, message, type });
   };
 
-  const handleRemoveImage = (e) => {
+  const handleRemoveImage = () => {
     setPreview(null);
     setFile(null);
   };
@@ -77,27 +92,51 @@ const AdminNoticeForm = () => {
     if (file) {
       formData.append("file", file);
     }
-    authInstance
-      .post(`/api/admin/notices`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.status === 201) {
-          navi("/admin/notices");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        navi("/errorPage", {
-          state: {
-            code: err.status,
-            message: "공지사항등록에 실패하였습니다.",
+
+    try {
+      let res;
+      if (isEditMode) {
+        // 수정 모드
+        res = await authInstance.put(
+          `/api/admin/notices/${noticeNo}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+      } else {
+        // 등록 모드
+        res = await authInstance.post(`/api/admin/notices`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
         });
+      }
+
+      if (res.status === 200 || res.status === 201) {
+        showToast(
+          isEditMode
+            ? "공지사항이 수정되었습니다."
+            : "공지사항이 등록되었습니다.",
+          "success",
+        );
+        setTimeout(() => {
+          navi("/admin/notices");
+        }, 1000);
+      }
+    } catch (err) {
+      console.error(err);
+      navi("/errorPage", {
+        state: {
+          code: err.status,
+          message: isEditMode
+            ? "공지사항 수정에 실패하였습니다."
+            : "공지사항 등록에 실패하였습니다.",
+        },
       });
+    }
   };
 
   return (
@@ -111,14 +150,14 @@ const AdminNoticeForm = () => {
         />
       )}
       <Breadcrumb>
-        <div className="link-item" onClick={handleImage}>
+        <div className="link-item">
           <Bell size={14} />
         </div>
         <ChevronRight size={12} />
-        <span>공지사항 등록</span>
+        <span>{isEditMode ? "공지사항 수정" : "공지사항 등록"}</span>
       </Breadcrumb>
 
-      <FormTitle>공지사항 등록</FormTitle>
+      <FormTitle>{isEditMode ? "공지사항 수정" : "공지사항 등록"}</FormTitle>
 
       <FormGroup>
         <Label>제목</Label>
@@ -156,7 +195,7 @@ const AdminNoticeForm = () => {
           이미지 미리보기
         </Label>
         <ImageGrid>
-          {preview ? ( // map 대신 조건부 렌더링
+          {preview ? (
             <ImageWrapper>
               <img src={preview} alt="preview" />
               <RemoveImageButton onClick={handleRemoveImage}>
@@ -165,7 +204,12 @@ const AdminNoticeForm = () => {
             </ImageWrapper>
           ) : (
             <UploadPlaceholder as="label">
-              <input type="file" hidden onChange={handleImage} />
+              <input
+                type="file"
+                hidden
+                onChange={handleImage}
+                accept="image/*"
+              />
               <ImageIcon size={24} />
               <span>사진 추가</span>
             </UploadPlaceholder>
@@ -174,7 +218,9 @@ const AdminNoticeForm = () => {
       </ImageSection>
 
       <ButtonGroup>
-        <SubmitButton onClick={handlePostSubmit}>등록 완료</SubmitButton>
+        <SubmitButton onClick={handlePostSubmit}>
+          {isEditMode ? "수정 완료" : "등록 완료"}
+        </SubmitButton>
         <CancelButton onClick={() => navi(-1)}>취소</CancelButton>
       </ButtonGroup>
     </Container>
