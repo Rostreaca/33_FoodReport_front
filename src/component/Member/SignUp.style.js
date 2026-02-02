@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+export const SignUpLayout = styled.div`
+    padding : 0px 330px;
+`;
+
 export const SignUpContainer = styled.div`
     min-height: 100vh;
     display: flex;
@@ -9,10 +13,10 @@ export const SignUpContainer = styled.div`
 
 export const BackgroundImage = styled.div`
     flex: 1;
-    background-image: url('/main.jpg');
+    background-image: url('/steak.jpg');
     background-size: cover;
     background-position: center;
-    filter: blur(2px);
+    filter: blur(0.8px);
     
     @media (max-width: 768px) {
         display: none;
