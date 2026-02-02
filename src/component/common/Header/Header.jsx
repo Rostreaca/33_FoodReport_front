@@ -9,6 +9,7 @@ const Header = () => {
     const navi = useNavigate();
     const { auth, logout } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
+    const [keyword, setKeyword] = useState('');
     return (
         <S.HeaderContainer>
             <S.HeaderWrapper>
@@ -18,12 +19,14 @@ const Header = () => {
                     </S.LogoLink>
                     <S.SearchWrapper>
                         <S.SearchIcon>
-                            <S.SearchButton>
+                            <S.SearchButton onClick={() => navi(`/searchList?query=${keyword}`)}>
                                 <Search size={16} color="#9ca3af" />
                             </S.SearchButton>
                         </S.SearchIcon>
                         <S.SearchInput
                             type="text"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
                             placeholder="음식이름 입력하세요"
                         />
                     </S.SearchWrapper>
