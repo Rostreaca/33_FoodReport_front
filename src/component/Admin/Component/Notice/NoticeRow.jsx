@@ -18,14 +18,27 @@ import {
   ContentImage,
 } from "./NoticeRow.style.js";
 import { AuthContext } from "../../../context/AuthContext";
+import { authInstance } from "../../../api/reqService.js";
+import Toast from "../../../common/Toast/Toast.jsx";
+import { useNavigate } from "react-router-dom";
 
-const NoticeRow = ({ notice }) => {
+const NoticeRow = ({ notice, onStatusChange }) => {
   const auth = useContext(AuthContext);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
+  const navi = useNavigate();
+
+  const showToast = (message, type = "error") => {
+    // 알럿 대신 토스트
+    setToast({ show: true, message, type });
+  };
 
   const toggleOptions = (e) => {
-    e.stopPropagation(); // 행 클릭 이벤트 방지
     setIsOptionsOpen(!isOptionsOpen);
   };
 
@@ -33,21 +46,43 @@ const NoticeRow = ({ notice }) => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleEdit = (e) => {
-    e.stopPropagation();
-    // 수정 로직
+  const handleUpdate = (e) => {
+    const noticeNo = notice.noticeNo;
+    navi(`/admin/notices/form/${noticeNo}`)
+
+
+
     setIsOptionsOpen(false);
   };
 
   const handleDelete = (e) => {
-    e.stopPropagation();
-    // 삭제 로직
+    const noticeNo = notice.noticeNo;
+    authInstance
+      .delete(`/api/admin/notices/${noticeNo}`)
+      .then((res) => {
+        if (res.status === 204) {
+          showToast("삭제 성공하였습니다!", "success");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        showToast("삭제에 실패하였습니다!", "error");
+      });
+
     setIsOptionsOpen(false);
   };
 
   return (
     <>
       <NoticeRowContainer onClick={toggleExpand} style={{ cursor: "pointer" }}>
+        {toast.show && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            duration={3000}
+            onClose={() => setToast({ ...toast, show: false })}
+          />
+        )}
         <TitleCell>
           <span className="mobile-label">제목:</span>
           <span className="mobile-value">
@@ -80,7 +115,7 @@ const NoticeRow = ({ notice }) => {
         <StatusCell>
           <span className="mobile-label">상태:</span>
           <StatusBadge $isActive={notice.status}>
-            {notice.status ? "공개" : "비공개"}
+            {notice.status === "Y" ? "공개" : "비공개"}
           </StatusBadge>
         </StatusCell>
         <OptionsCell onClick={(e) => e.stopPropagation()}>
@@ -89,7 +124,7 @@ const NoticeRow = ({ notice }) => {
           </OptionsButton>
           {isOptionsOpen && (
             <OptionsMenu>
-              <OptionsMenuItem onClick={handleEdit}>수정하기</OptionsMenuItem>
+              <OptionsMenuItem onClick={handleUpdate}>수정하기</OptionsMenuItem>
               <OptionsMenuItem onClick={handleDelete}>삭제하기</OptionsMenuItem>
             </OptionsMenu>
           )}

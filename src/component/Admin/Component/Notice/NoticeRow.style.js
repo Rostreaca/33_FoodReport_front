@@ -187,8 +187,8 @@ export const StatusBadge = styled.span`
   border-radius: 20px;
   font-size: 12px;
   font-weight: 500;
-  background-color: ${(props) => (props.$isActive ? "#d1fae5" : "#fee2e2")};
-  color: ${(props) => (props.$isActive ? "#065f46" : "#991b1b")};
+  background-color: ${(props) => (props.$isActive==="Y" ? "#d1fae5" : "#fee2e2")};
+  color: ${(props) => (props.$isActive==="Y" ? "#065f46" : "#991b1b")};
 `;
 
 export const OptionsCell = styled.div`

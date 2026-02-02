@@ -20,7 +20,7 @@ import {
   SubmitButton,
   CancelButton,
 } from "./AdminNoticeForm.style.js"; // 또는 실제 스타일 파일 경로
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { authInstance } from "../../../api/reqService.js";
 import Toast from "../../../common/Toast/Toast.jsx";
 
@@ -35,7 +35,8 @@ const AdminNoticeForm = () => {
     message: "",
     type: "error",
   });
-  
+  const { noticeNo } = useParams();
+
   const handleImage = (e) => {
     const selectedFile = e.target.files[0];
 

@@ -81,6 +81,14 @@ const AdminNotice = () => {
     }
   }, [currentPage, searchText]);
 
+  const refreshNotice = () => {
+    if(searchText.trim()) {
+      noticeFindByKeyword(currentPage, searchText);
+    } else {
+      noticeFindAll(currentPage);
+    }
+  };
+
   return (
     <Container>
       {/* 헤더 영역 */}
@@ -115,7 +123,7 @@ const AdminNotice = () => {
         <NoticeList>
           {notices.length > 0 ? (
             notices.map((notice, index) => (
-              <NoticeRow key={index} notice={notice} />
+              <NoticeRow key={index} notice={notice} onStatusChange={refreshNotice}/>
             ))
           ) : (
             <EmptyStateMessage>게시물이 존재하지 않습니다</EmptyStateMessage>
