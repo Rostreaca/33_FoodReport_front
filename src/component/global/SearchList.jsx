@@ -19,7 +19,8 @@ import {
   Tag,
   CategorySection,
   BackgroundImg,
-  BackgroundImgLayout
+  BackgroundImgLayout,
+  Region
 } from './SearchList.style.js';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { publicInstance } from '../api/reqService.js';
@@ -30,6 +31,8 @@ const SearchList = () => {
   const [activeTag, setActiveTag] = useState(null);
   const [activeRegion, setActiveRegion] = useState('전체');
   const [tags, setTags] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [regionNo, setRegionNo] = useState(0);
   const [tagNo, setTagNo] = useState(0);
   const [keyword, setKeyword] = useState('');
   const [reviewPage, setReviewPage] = useState(1);  
@@ -43,10 +46,6 @@ const SearchList = () => {
 
   const [searchParam] = useSearchParams();
 
-  const regions = [
-    '전체', '서울', '경기', '강원', '충북', '충남', '경북', '경남', '전북', '전남', '부산', '인천', '대전', '대구', '광주', '울산', '제주'
-  ];
-
   useEffect(() => {
 
     publicInstance.get(`/api/global/tags`)
@@ -55,6 +54,14 @@ const SearchList = () => {
       }).catch((err) => {
         console.error(err);
       })
+
+    publicInstance.get(`/api/global/regions`)
+      .then((res) => {
+        setRegions(res.data.data);
+      }).catch((err) => {
+        console.error(err);
+      })
+    
   }, []);
 
   useEffect(() => {
@@ -68,33 +75,42 @@ const SearchList = () => {
   useEffect(() => {
     findAllPlaces();
 
-  },[tagNo, placePage, keyword])
+  },[tagNo, regionNo,placePage, keyword])
 
   useEffect(() => {
     findAllReviews();
 
-  },[tagNo, reviewPage, keyword])
+  },[tagNo, regionNo, reviewPage, keyword])
 
   const findAllReviews = () => {
-        publicInstance.get(`/api/global/searchReviews?keyword=${keyword}&page=${reviewPage}&tagNo=${tagNo}`)
+        publicInstance.get(`/api/global/searchReviews?keyword=${keyword}&page=${reviewPage}&tagNo=${tagNo}&regionNo=${regionNo}`)
             .then((res) => {
-                console.log(res);
                 setReviews([...reviews, ...res.data.data.reviews]);
                 setReviewPageInfo(res.data.data.pageInfo);
             }).catch((err) => {
-                console.error(err);
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
             })
     }
     const findAllPlaces = () => {
-        publicInstance.get(`/api/global/searchPlaces?keyword=${keyword}&page=${placePage}&tagNo=${tagNo}`)
+        publicInstance.get(`/api/global/searchPlaces?keyword=${keyword}&page=${placePage}&tagNo=${tagNo}&regionNo=${regionNo}`)
             .then((res) => {
-                console.log(res);
                 setPlaces([...places,...res.data.data.places]);
                 setPlacePageInfo(res.data.data.pageInfo);
             }).catch((err) => {
-                console.error(err);
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
             })
     }
+  
+  const handleActiveRegion = (e) => {
+    setActiveRegion(activeRegion === e ? null : e);
+    setRegionNo(activeRegion === e ? 0 : e.regionNo);
+
+    setReviews([]);
+    setReviewPage(1);
+
+    setPlaces([]);
+    setPlacePage(1);
+  }
 
   const handleActiveTag = (e) => {
     setActiveTag(activeTag === e ? null : e);
@@ -128,7 +144,7 @@ const SearchList = () => {
   return (
     <Container>
       <CategorySection>
-        <SectionTitle>카테고리</SectionTitle>
+        <SectionTitle>해시태그</SectionTitle>
         <TagContainer>
           {Array.isArray(tags) && tags.map((tag, index) => (
             <Tag
@@ -139,6 +155,18 @@ const SearchList = () => {
             >
               #{tag.tagTitle}
             </Tag>
+          ))}
+        </TagContainer>        
+        <SectionTitle>지역</SectionTitle>
+        <TagContainer>
+          {Array.isArray(regions) && regions.map((region, index) => (
+            <Region
+              key={index}
+              $active={activeRegion === region}
+              onClick={() => handleActiveRegion(region)}
+            >
+              {region.regionName}
+            </Region>
           ))}
         </TagContainer>
       </CategorySection>
