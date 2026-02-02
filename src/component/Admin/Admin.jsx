@@ -7,6 +7,7 @@ import AdminHashtag from "./Component/Hashtag/AdminHashtag";
 import Layout from "./Layout/Layout";
 import { Routes, Route } from "react-router-dom";
 import AdminBusiness from "./Component/Business/AdminBusiness"
+import AdminNoticeForm from "./Component/Notice/AdminNoticeForm";
 
 const Admin = () => {
     return (
@@ -20,6 +21,7 @@ const Admin = () => {
                     <Route path="/reviews" element={<AdminReview />}/>
                     <Route path="/hashtags" element={<AdminHashtag />}/>
                     <Route path="/business" element={<AdminBusiness />}/>
+                    <Route path="/notices/form" element={<AdminNoticeForm />} />
                 </Routes>
         </Layout>
     )
