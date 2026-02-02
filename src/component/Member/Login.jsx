@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import * as S from './Login.style';
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext"
+import { publicInstance } from "../api/reqService"
+import Toast from '../common/Toast/Toast';
 
 
 const Login = () => {
@@ -14,6 +15,11 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [keepLoggedIn, setKeepLoggedIn] = useState(false);
     const { login } = useContext(AuthContext);
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "error",
+    })
 
 
     const handleChange = (e) => {
@@ -23,32 +29,40 @@ const Login = () => {
             [name]: value
         }));
     };
-
+    const showToast = (message, type = "error") => {
+        // 알럿 대신 토스트
+        setToast({ show: true, message, type });
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         const { email, password } = formData;
-        axios.post("http://localhost:8080/api/auth/login", {
-            email,
-            password,
-        })
-.then((result) => {
-    //console.log("서버 응답 실제 데이터:", result.data);
-    const { email, nickname, phone, accessToken, refreshToken, role } = result.data.data;
-    //console.log("추출된 값 확인:", { email, nickname, phone });
+        publicInstance.post("/api/auth/login", { email, password, })
+            .then((result) => {
+                //console.log("서버 응답 실제 데이터:", result.data);
+                const { memberNo, email, nickname, phone, accessToken, refreshToken, role } = result.data.data;
+                //console.log("추출된 값 확인:", { email, nickname, phone });
 
-    // AuthContext의 login 함수 호출
-    login(email, nickname, phone, accessToken, refreshToken, role);
-    
-    alert("로그인 성공!");
-    navigate('/');
-    })
-      .catch((error) => {
-        alert("아이디 또는 비밀번호를 확인해주세요.");
-      });
-  };
+                // AuthContext의 login 함수 호출
+                login(memberNo, email, nickname, phone, accessToken, refreshToken, role);
+
+                navigate('/');
+                showToast("로그인에 성공하였습니다!", "success");
+            })
+            .catch((error) => {
+                showToast("아이디 또는 비밀번호를 확인해주세요.", "error");
+            });
+    };
 
     return (
         <S.LoginContainer>
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    duration={3000}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
             <S.TopMenu>
                 <S.MenuItem onClick={() => navigate('/login')}>
                     <S.MenuIcon>🚪</S.MenuIcon>
@@ -62,7 +76,7 @@ const Login = () => {
 
             <S.LoginWrapper>
                 <S.Title>로그인</S.Title>
-                
+
                 <S.Form onSubmit={handleSubmit}>
                     <S.InputGroup>
                         <S.Label>이메일</S.Label>
@@ -91,16 +105,16 @@ const Login = () => {
                                 onChange={handleChange}
                                 required
                             />
-                            
+
                             <S.EyeIcon onClick={() => setShowPassword(!showPassword)}>
                                 {showPassword ? '👁️' : '👁️‍🗨️'}
                             </S.EyeIcon>
                         </S.InputWrapper>
                         {formData.password && formData.password.length < 8 && (
-        <span style={{ color: 'red', fontSize: '12px' }}>
-            비밀번호는 8자 이상이어야 합니다.
-        </span>
-    )}
+                            <span style={{ color: 'red', fontSize: '12px' }}>
+                                비밀번호는 8자 이상이어야 합니다.
+                            </span>
+                        )}
                     </S.InputGroup>
 
                     <S.OptionsRow>
