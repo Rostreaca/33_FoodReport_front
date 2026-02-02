@@ -15,8 +15,13 @@ import {
     TableCard,
     TablePlaceholder
 } from './AdminDashBoard.style';
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
 
 const AdminDashBoard = () => {
+    const auth = useContext(AuthContext);
+
+    console.log(auth);
     return (
         <DashboardContainer>
             {/* 상단: 통계 카드 */}
@@ -25,7 +30,7 @@ const AdminDashBoard = () => {
                     <LayoutDashboard size={20} />
                     <span>대시보드</span>
                 </Breadcrumb>
-                <WelcomeMessage>안녕하세요, 하늘님</WelcomeMessage>
+                <WelcomeMessage>안녕하세요, {auth.auth.nickname}님</WelcomeMessage>
             </HeaderSection>
 
             <TopSection>

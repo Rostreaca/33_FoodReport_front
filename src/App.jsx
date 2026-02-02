@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Main from "./component/common/Main/Main";
 import Header from "./component/common/Header/Header";
 import Footer from "./component/common/Footer/Footer";
@@ -23,10 +23,12 @@ import PlaceUpdateForm from "./component/Place/PlaceUpdateForm";
 import PlaceList from "./component/Place/PlaceList";
 
 function App() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
   return (
     <>
       <AuthProvider>
-        <Header />
+        {!isAdmin && <Header />}
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/errorpage" element={<ErrorPage />} />
@@ -55,7 +57,7 @@ function App() {
             <Route path="withdrawal" element={<MemberWithdrawal />} />
           </Route>
         </Routes>
-        <Footer />
+        {!isAdmin && <Footer />}
       </AuthProvider>
     </>
   );
