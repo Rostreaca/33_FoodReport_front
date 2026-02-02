@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import * as S from './Login.style';
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext"
 import { publicInstance } from "../api/reqService"
+import Toast from '../common/Toast/Toast';
 
 
 const Login = () => {
@@ -15,6 +15,11 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [keepLoggedIn, setKeepLoggedIn] = useState(false);
     const { login } = useContext(AuthContext);
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "error",
+    })
 
 
     const handleChange = (e) => {
@@ -24,7 +29,10 @@ const Login = () => {
             [name]: value
         }));
     };
-
+    const showToast = (message, type = "error") => {
+        // 알럿 대신 토스트
+        setToast({ show: true, message, type });
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         const { email, password } = formData;
@@ -37,16 +45,24 @@ const Login = () => {
                 // AuthContext의 login 함수 호출
                 login(memberNo, email, nickname, phone, accessToken, refreshToken, role);
 
-                alert("로그인 성공!");
                 navigate('/');
+                showToast("로그인에 성공하였습니다!", "success");
             })
             .catch((error) => {
-                alert("아이디 또는 비밀번호를 확인해주세요.");
+                showToast("아이디 또는 비밀번호를 확인해주세요.", "error");
             });
     };
 
     return (
         <S.LoginContainer>
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    duration={3000}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
             <S.TopMenu>
                 <S.MenuItem onClick={() => navigate('/login')}>
                     <S.MenuIcon>🚪</S.MenuIcon>
