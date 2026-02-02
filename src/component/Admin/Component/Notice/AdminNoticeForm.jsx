@@ -47,7 +47,7 @@ const AdminNoticeForm = () => {
       const noticeData = location.state.notice;
       setTitle(noticeData.noticeTitle || "");
       setContent(noticeData.noticeContent || "");
-      console.log(noticeData);
+
       // 기존 이미지가 있다면 미리보기 설정
       if (noticeData.noticeImageUrl) {
         setPreview(noticeData.noticeImageUrl);
