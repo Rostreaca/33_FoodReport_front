@@ -34,11 +34,11 @@ import {
     PaginationContainer,
     SearchContainer,
     LeftSpacer,
-    BackgroundImg
+    BackgroundImg,
+    Region
 } from "./ReviewList.style";
 import Pagination from "../common/Paging/Pagination";
-import { ChevronDown, ChevronRight, ThumbsUp, Eye, Search, Image } from "lucide-react";
-import axios from "axios";
+import { ChevronDown, ThumbsUp, Eye, Search } from "lucide-react";
 import { publicInstance } from "../api/reqService";
 import { useNavigate } from "react-router-dom";
 
@@ -48,6 +48,7 @@ const ReviewList = () => {
 
     const navi = useNavigate();
     const [activeTag, setActiveTag] = useState(null);
+    const [activeRegion, setActiveRegion] = useState(null);
     const [sortOpen, setSortOpen] = useState(false);
     const [sortBy, setSortBy] = useState("최신순");
     const [orderBy, setOrderBy] = useState("createDate");
@@ -61,6 +62,9 @@ const ReviewList = () => {
     const [tags, setTags] = useState([]);
     const [tagNo, setTagNo] = useState(0);
 
+    const [regions, setRegions] = useState([]);
+    const [regionNo, setRegionNo] = useState(0);
+
     const [reviews, setReviews] = useState([]);
 
     useEffect(() => {
@@ -68,12 +72,20 @@ const ReviewList = () => {
             .then((res) => {
                 setTags(res.data.data);
             }).catch((err) => {
-                console.error(err);
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
             })
+
+        publicInstance.get(`/api/global/regions`)
+            .then((res) => {
+                setRegions(res.data.data);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+        
     }, []);
 
     const findAllReviews = () => {
-        publicInstance.get(`/api/reviews?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}`)
+        publicInstance.get(`/api/reviews?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}&regionNo=${regionNo}`)
             .then((res) => {
                 setPageInfo({
                     currentPage: res.data.data.pageInfo.currentPage,
@@ -83,13 +95,13 @@ const ReviewList = () => {
                 });
                 setReviews(res.data.data.reviews);
             }).catch((err) => {
-                console.error(err);
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
             })
     }
 
     useEffect(() => {
         findAllReviews();
-    }, [pageInfo.currentPage, orderBy, tagNo]);
+    }, [pageInfo.currentPage, orderBy, tagNo, regionNo]);
 
     const ICONS = {
         user: "/user.png",
@@ -113,10 +125,16 @@ const ReviewList = () => {
         setTagNo(activeTag === e ? 0 : e.tagNo);
     }
 
+    const handleActiveRegion = (e) => {
+        setActiveRegion(activeRegion === e ? null : e);
+        setRegionNo(activeRegion === e ? 0 : e.regionNo);
+    }
+
+
     return (
         <Container>
             <CategorySection>
-                <SectionTitle>카테고리</SectionTitle>
+                <SectionTitle>해시태그</SectionTitle>
                 <TagContainer>
                     {Array.isArray(tags) && tags.map((tag, index) => (
                         <Tag
@@ -127,6 +145,18 @@ const ReviewList = () => {
                         >
                             #{tag.tagTitle}
                         </Tag>
+                    ))}
+                </TagContainer>
+                <SectionTitle>지역</SectionTitle>
+                <TagContainer>
+                    {Array.isArray(regions) && regions.map((region, index) => (
+                        <Region
+                            key={index}
+                            $active={activeRegion === region}
+                            onClick={() => handleActiveRegion(region)}
+                        >
+                            {region.regionName}
+                        </Region>
                     ))}
                 </TagContainer>
             </CategorySection>
