@@ -71,6 +71,24 @@ export const Tag = styled.button`
   }
 `;
 
+export const Region = styled.button`
+  position: relative;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid ${(props) => (props.$active ? "#f97316" : "#e5e7eb")};
+  background: ${(props) => (props.$active ? "#fff7ed" : "#fff")};
+  color: ${(props) => (props.$active ? "#f97316" : "#6b7280")};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #f97316;
+    color: #f97316;
+
+  }
+`;
+
 export const PlaceSection = styled.div``;
 
 export const PlaceHeader = styled.div`
