@@ -21,6 +21,8 @@ import {
     BottomMenu
 } from "./SideBar.style";
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../../context/AuthContext';
+import { useContext } from 'react';
 
 const MENU_ITEMS = [
     { id: 1, label: '대시보드', icon: LayoutDashboard, path: '/admin' },
@@ -34,11 +36,12 @@ const MENU_ITEMS = [
 
 const SideBar = () => {
     const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
 
 
     const handleLogout = () => {
         if (window.confirm("관리자 페이지에서 로그아웃 하시겠습니까?")) {
-
+            logout();
         }
     };
 
@@ -69,11 +72,11 @@ const SideBar = () => {
             </MenuList>
 
             <BottomMenu>
-                <MenuItem onClick={handleLogout}>
+                <MenuItem>
                     <IconWrapper>
                         <LogOut size={20} /> 
                     </IconWrapper>
-                    <MenuText>로그아웃</MenuText>
+                    <MenuText onClick={handleLogout}>로그아웃</MenuText>
                     <ArrowIcon>
                         <ChevronRight size={20} />
                     </ArrowIcon>
