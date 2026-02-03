@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import * as S from './MemberWithdrawal.style';
 import { AuthContext } from '../context/AuthContext';
+import { publicInstance } from '../api/reqService.js';
 
 const MemberWithdrawal = () => {
     const navigate = useNavigate();
@@ -34,31 +34,29 @@ const MemberWithdrawal = () => {
             return;
         }
 
-        try {
-            const response = await axios.delete(
-                'http://localhost:8080/api/members',
-                {
-                    headers: {
-                        Authorization: `Bearer ${auth.accessToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: {
-                        password: password
-                    }
-                });
-
-            if (response.status === 200) {
+        publicInstance.delete('/api/members', {
+            headers: {
+                Authorization: `Bearer ${auth.accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            data: {
+                password: password
+            }
+        })
+        .then((res) => {
+            if (res.status === 200) {
                 alert('회원 탈퇴가 완료되었습니다.');
-                logout(); // 로그아웃 처리
+                logout();
                 navigate('/');
             }
-        } catch (error) {
-            const errorMessage = error?.response?.data?.message
-                || error?.response?.data?.['error-message']
+        })
+        .catch((err) => {
+            const errorMessage = err?.response?.data?.message
+                || err?.response?.data?.['error-message']
                 || '회원 탈퇴 중 문제가 발생했습니다.';
             alert(errorMessage);
-            console.error('회원 탈퇴 실패:', error);
-        }
+            console.error('회원 탈퇴 실패:', err);
+        });
     };
 
     return (
@@ -77,7 +75,6 @@ const MemberWithdrawal = () => {
             </S.WarningBox>
 
             <S.Form onSubmit={handleSubmit}>
-
                 <S.InputGroup>
                     <S.Label>탈퇴 확인</S.Label>
                     <S.ConfirmInput
