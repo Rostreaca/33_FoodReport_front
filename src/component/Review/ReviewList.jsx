@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     Container,
     SectionTitle,
@@ -41,10 +41,13 @@ import Pagination from "../common/Paging/Pagination";
 import { ChevronDown, ThumbsUp, Eye, Search } from "lucide-react";
 import { publicInstance } from "../api/reqService";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const CARD_PLACEHOLDER = "/card.png";
 
 const ReviewList = () => {
+
+    const { auth } = useContext(AuthContext);
 
     const navi = useNavigate();
     const [activeTag, setActiveTag] = useState(null);
@@ -177,7 +180,11 @@ const ReviewList = () => {
                             </SortOption>
                         </SortDropdownMenu>
                     </SortDropdownContainer>
-                    <WriteButton>글쓰기</WriteButton>
+                    { auth.isAuthenticated ?
+                    <WriteButton onClick={() => navi('/reviews/insertform')}>글쓰기</WriteButton>
+                    :
+                    <></>
+                    }
                 </ReviewHeader>
 
                 <ReviewGrid>
