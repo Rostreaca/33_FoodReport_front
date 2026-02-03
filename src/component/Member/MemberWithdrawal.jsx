@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './MemberWithdrawal.style';
+import { AuthContext } from '../context/AuthContext';
+import { publicInstance } from '../api/reqService.js';
 
 const MemberWithdrawal = () => {
     const navigate = useNavigate();
-    const [reason, setReason] = useState('');
+    const { auth, logout } = useContext(AuthContext);
     const [confirmText, setConfirmText] = useState('');
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e) => {
+    const togglePassword = () => {
+        setShowPassword(prev => !prev);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!isConfirmed) {
-            alert('회원 탈퇴를 확인해주세요.');
+            alert('회원 탈퇴를 확인해주세요.(Check Box)');
             return;
         }
 
@@ -21,10 +29,34 @@ const MemberWithdrawal = () => {
             return;
         }
 
-        // TODO: 회원 탈퇴 API 호출
-        console.log('Withdraw:', { reason, confirmText });
-        alert('회원 탈퇴가 완료되었습니다.');
-        navigate('/');
+        if (!password) {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        publicInstance.delete('/api/members', {
+            headers: {
+                Authorization: `Bearer ${auth.accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            data: {
+                password: password
+            }
+        })
+        .then((res) => {
+            if (res.status === 200) {
+                alert('회원 탈퇴가 완료되었습니다.');
+                logout();
+                navigate('/');
+            }
+        })
+        .catch((err) => {
+            const errorMessage = err?.response?.data?.message
+                || err?.response?.data?.['error-message']
+                || '회원 탈퇴 중 문제가 발생했습니다.';
+            alert(errorMessage);
+            console.error('회원 탈퇴 실패:', err);
+        });
     };
 
     return (
@@ -38,23 +70,11 @@ const MemberWithdrawal = () => {
             <S.WarningBox>
                 <S.WarningTitle>⚠️ 주의사항</S.WarningTitle>
                 <S.WarningList>
-                    <li>탈퇴 후 모든 데이터가 삭제되며 복구할 수 없습니다.</li>
-                    <li>작성한 리뷰와 좋아요 정보가 모두 삭제됩니다.</li>
-                    <li>탈퇴 후 30일간 동일한 이메일로 재가입이 불가능합니다.</li>
+                    <li>탈퇴 후 동일한 이메일로 재가입이 불가능합니다.</li>
                 </S.WarningList>
             </S.WarningBox>
 
             <S.Form onSubmit={handleSubmit}>
-                <S.InputGroup>
-                    <S.Label>탈퇴 사유 (선택사항)</S.Label>
-                    <S.TextArea
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                        placeholder="탈퇴 사유를 입력해주세요."
-                        rows={5}
-                    />
-                </S.InputGroup>
-
                 <S.InputGroup>
                     <S.Label>탈퇴 확인</S.Label>
                     <S.ConfirmInput
@@ -66,6 +86,25 @@ const MemberWithdrawal = () => {
                     <S.ConfirmText>
                         회원 탈퇴를 확인하려면 위 입력란에 "탈퇴"를 입력해주세요.
                     </S.ConfirmText>
+                </S.InputGroup>
+
+                <S.InputGroup>
+                    <S.Label>비밀번호 확인</S.Label>
+                    <S.InputWrapper>
+                        <S.PasswordInput
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="현재 비밀번호를 입력해주세요."
+                            required
+                        />
+                        <S.TogglePasswordButton
+                            type="button"
+                            onClick={togglePassword}
+                        >
+                            {showPassword ? '👁️' : '👁️‍🗨️'}
+                        </S.TogglePasswordButton>
+                    </S.InputWrapper>
                 </S.InputGroup>
 
                 <S.CheckboxWrapper>
