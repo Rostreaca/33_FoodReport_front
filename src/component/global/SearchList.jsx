@@ -19,12 +19,8 @@ import {
   Tag,
   CategorySection,
   BackgroundImg,
-<<<<<<< HEAD
-  BackgroundImgLayout
-=======
   BackgroundImgLayout,
   Region
->>>>>>> 40394dee014753946b563a0e2d72d4cea291a208
 } from './SearchList.style.js';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { publicInstance } from '../api/reqService.js';
@@ -35,11 +31,8 @@ const SearchList = () => {
   const [activeTag, setActiveTag] = useState(null);
   const [activeRegion, setActiveRegion] = useState('전체');
   const [tags, setTags] = useState([]);
-<<<<<<< HEAD
-=======
   const [regions, setRegions] = useState([]);
   const [regionNo, setRegionNo] = useState(0);
->>>>>>> 40394dee014753946b563a0e2d72d4cea291a208
   const [tagNo, setTagNo] = useState(0);
   const [keyword, setKeyword] = useState('');
   const [reviewPage, setReviewPage] = useState(1);  
@@ -52,8 +45,6 @@ const SearchList = () => {
   const [placePageInfo, setPlacePageInfo] = useState({});
 
   const [searchParam] = useSearchParams();
-<<<<<<< HEAD
-=======
 
   useEffect(() => {
 
@@ -113,65 +104,13 @@ const SearchList = () => {
   const handleActiveRegion = (e) => {
     setActiveRegion(activeRegion === e ? null : e);
     setRegionNo(activeRegion === e ? 0 : e.regionNo);
->>>>>>> 40394dee014753946b563a0e2d72d4cea291a208
 
     setReviews([]);
     setReviewPage(1);
 
-<<<<<<< HEAD
-  useEffect(() => {
-
-    publicInstance.get(`/api/global/tags`)
-      .then((res) => {
-        setTags(res.data.data);
-      }).catch((err) => {
-        console.error(err);
-      })
-  }, []);
-
-  useEffect(() => {
-    setKeyword(searchParam.get('query'));
-    setPlaces([]);
-    setReviews([]);
-    setPlacePage(1);
-    setReviewPage(1);
-  },[searchParam])
-
-  useEffect(() => {
-    findAllPlaces();
-
-  },[tagNo, placePage, keyword])
-
-  useEffect(() => {
-    findAllReviews();
-
-  },[tagNo, reviewPage, keyword])
-
-  const findAllReviews = () => {
-        publicInstance.get(`/api/global/searchReviews?keyword=${keyword}&page=${reviewPage}&tagNo=${tagNo}`)
-            .then((res) => {
-                console.log(res);
-                setReviews([...reviews, ...res.data.data.reviews]);
-                setReviewPageInfo(res.data.data.pageInfo);
-            }).catch((err) => {
-                console.error(err);
-            })
-    }
-    const findAllPlaces = () => {
-        publicInstance.get(`/api/global/searchPlaces?keyword=${keyword}&page=${placePage}&tagNo=${tagNo}`)
-            .then((res) => {
-                console.log(res);
-                setPlaces([...places,...res.data.data.places]);
-                setPlacePageInfo(res.data.data.pageInfo);
-            }).catch((err) => {
-                console.error(err);
-            })
-    }
-=======
     setPlaces([]);
     setPlacePage(1);
   }
->>>>>>> 40394dee014753946b563a0e2d72d4cea291a208
 
   const handleActiveTag = (e) => {
     setActiveTag(activeTag === e ? null : e);
