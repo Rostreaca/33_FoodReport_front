@@ -199,13 +199,7 @@ const AdminDashBoard = () => {
         </ChartCard>
       </MiddleSection>
 
-      {/* 하단: 테이블 */}
-      <BottomSection>
-        <TableCard>
-          <h3>최근 거래 내역</h3>
-          <TablePlaceholder>테이블 영역</TablePlaceholder>
-        </TableCard>
-      </BottomSection>
+      
     </DashboardContainer>
   );
 };
