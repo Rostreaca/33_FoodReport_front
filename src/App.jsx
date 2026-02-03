@@ -21,6 +21,7 @@ import SearchList from "./component/global/SearchList";
 import NoticeList from "./component/Notice/NoticeList";
 import PlaceUpdateForm from "./component/Place/PlaceUpdateForm";
 import PlaceList from "./component/Place/PlaceList";
+import ReviewInsertForm from "./component/Review/ReviewInsertForm";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/errorpage" element={<ErrorPage />} />
           <Route path="/reviews" element={<ReviewList />} />
+          <Route path="/reviews/insertform" element={<ReviewInsertForm />} />
           <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
           <Route path="/places" element={<PlaceList />} />
           <Route path="/places/:placeNo" element={<PlaceDetail />} />

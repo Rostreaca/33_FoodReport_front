@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     Container,
     SectionTitle,
@@ -41,10 +41,13 @@ import Pagination from "../common/Paging/Pagination";
 import { ChevronDown, ThumbsUp, Eye, Search } from "lucide-react";
 import { publicInstance } from "../api/reqService";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const CARD_PLACEHOLDER = "/card.png";
 
 const PlaceList = () => {
+
+    const { auth } = useContext(AuthContext);
 
     const navi = useNavigate();
     const [activeTag, setActiveTag] = useState(null);
@@ -175,7 +178,11 @@ const PlaceList = () => {
                             </SortOption>
                         </SortDropdownMenu>
                     </SortDropdownContainer>
+                    { auth.isAuthenticated ?
                     <WriteButton>글쓰기</WriteButton>
+                    :
+                    <></>
+                    }
                 </PlaceHeader>
 
                 <PlaceGrid>
