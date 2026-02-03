@@ -31,7 +31,6 @@ const PlaceDetail = () => {
             }).catch((err) => {
                 navi('/errorpage', {state : { code: 404 , message : err.response.data.message} });
             })
-
     }, []);
 
     return (
@@ -81,10 +80,10 @@ const PlaceDetail = () => {
                 )}
 
                 <ButtonGroup>
-                    {auth.isAuthenticated? (
+                    {auth.isAuthenticated && auth.memberNo == place.memberNo ? (
                         <>
                         <div>
-                            <ActionBtn $orange style={{ marginRight: '8px' }}>수정</ActionBtn>
+                            <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/places/updateform/${placeNo}`) }>수정</ActionBtn>
                             <ActionBtn $orange>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
