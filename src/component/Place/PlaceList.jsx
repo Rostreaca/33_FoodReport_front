@@ -178,8 +178,8 @@ const PlaceList = () => {
                             </SortOption>
                         </SortDropdownMenu>
                     </SortDropdownContainer>
-                    { auth.isAuthenticated ?
-                    <WriteButton>글쓰기</WriteButton>
+                    { auth.isAuthenticated && auth.role === '[ROLE_OWNER]' ?
+                    <WriteButton onClick={() => navi('/places/insertform')}>글쓰기</WriteButton>
                     :
                     <></>
                     }
