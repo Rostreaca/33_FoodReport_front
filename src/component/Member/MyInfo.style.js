@@ -246,3 +246,10 @@ export const SectionButton = styled.button`
         background: #e55a28;
     }
 `;
+
+export const ErrorText = styled.span`
+    display: block;
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+`;
