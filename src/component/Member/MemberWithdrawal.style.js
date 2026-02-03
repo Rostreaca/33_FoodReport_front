@@ -178,3 +178,28 @@ export const CancelButton = styled.button`
         border-color: #d1d5db;
     }
 `;
+
+export const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const PasswordInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  padding-right: 45px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+`;
+
+export const TogglePasswordButton = styled.button`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+`;

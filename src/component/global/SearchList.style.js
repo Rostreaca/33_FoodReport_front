@@ -104,6 +104,12 @@ export const ImagePlaceholder = styled.div`
   color: #9ca3af;
   font-size: 14px;
   border-right: 1px solid #f3f4f6;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 export const CardContent = styled.div`
@@ -204,3 +210,14 @@ export const Divider = styled.hr`
   background: #f3f4f6;
   margin: 60px 0;
 `;
+
+export const BackgroundImg = styled.img`
+  width: 360px;
+  height: auto;
+
+`
+
+export const BackgroundImgLayout = styled.div`
+  text-align : center;
+
+`
