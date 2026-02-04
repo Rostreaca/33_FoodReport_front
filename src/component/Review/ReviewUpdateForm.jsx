@@ -145,13 +145,13 @@ const ReviewUpdateForm = () => {
                 </div>
                 <ChevronRight size={12} />
                 <div className="link-item" onClick={() => navi('/reviews')}>
-                    추천 맛집
+                    리뷰 목록
                 </div>
                 <ChevronRight size={12} />
-                <span>맛집 작성</span>
+                <span>리뷰 수정</span>
             </Breadcrumb>
 
-      <FormTitle>맛집 작성</FormTitle>
+      <FormTitle>리뷰 수정</FormTitle>
 
       <FormGroup>
         <Label>제목</Label>

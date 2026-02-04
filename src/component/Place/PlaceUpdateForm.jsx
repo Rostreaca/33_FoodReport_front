@@ -148,10 +148,10 @@ const PlaceUpdateForm = () => {
                     추천 맛집
                 </div>
                 <ChevronRight size={12} />
-                <span>맛집 작성</span>
+                <span>맛집 수정</span>
             </Breadcrumb>
 
-      <FormTitle>맛집 작성</FormTitle>
+      <FormTitle>맛집 수정</FormTitle>
 
       <FormGroup>
         <Label>제목</Label>
