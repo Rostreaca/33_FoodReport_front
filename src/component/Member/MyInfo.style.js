@@ -36,8 +36,9 @@ export const ProfileSection = styled.div`
 `;
 
 export const ProfileImageWrapper = styled.div`
-    width: 120px;
-    height: 120px;
+    position: relative;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid #e5e7eb;
@@ -47,6 +48,20 @@ export const ProfileImage = styled.img`
     width: 100%;
     height: 100%;
     object-fit: cover;
+`;
+
+export const OwnerBadge = styled.div`
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: #ff8c00;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 `;
 
 export const ProfileText = styled.p`
