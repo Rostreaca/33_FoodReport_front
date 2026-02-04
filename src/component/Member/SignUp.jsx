@@ -267,7 +267,8 @@ const SignUp = () => {
                             </S.InputWrapper>
                             {errors.phone && <S.ErrorText>{errors.phone}</S.ErrorText>}
                         </S.InputGroup>
-
+                        <div></div>
+                        {/* 
                         <S.ProfileSection>
                             <S.ProfileText>
                                 프로필 사진은 귀하의 프로필과 목록에 표시됩니다.
@@ -287,6 +288,7 @@ const SignUp = () => {
                                 </S.FileLabel>
                             </S.FileInputWrapper>
                         </S.ProfileSection>
+                                    */}
 
                         <S.SignUpButton type="submit">가입하기</S.SignUpButton>
                     </S.Form>

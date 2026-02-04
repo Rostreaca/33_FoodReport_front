@@ -1,22 +1,55 @@
 import { useState, useContext } from 'react';
-import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import { authInstance } from "../../api/reqService";
 import * as S from './MemberModal.style';
 
 // 사장님 등록하기 모달
 export const RegisterOwnerModal = ({ isOpen, onClose }) => {
+  const { auth } = useContext(AuthContext);
   const [businessNumber, setBusinessNumber] = useState('');
   const [storeName, setStoreName] = useState('');
   const [address, setAddress] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('사장님 등록:', { businessNumber, storeName, address });
-    alert('사장님 등록 신청이 완료되었습니다!');
-    onClose();
-    setBusinessNumber('');
-    setStoreName('');
-    setAddress('');
+
+    if (!auth?.accessToken) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    // 사업자 번호 유효성 검사 (10자리 숫자)
+    if (!/^\d{10}$/.test(businessNumber)) {
+      alert('사업자 번호는 10자리 숫자로 입력해주세요.');
+      return;
+    }
+
+    const requestData = {
+      businessNo: businessNumber,
+      restaurantName: storeName,
+      address: address,
+      status: 'Y'
+    };
+
+    console.log('사장님 등록 요청:', requestData);
+
+    authInstance.post('/api/members/owner', requestData)
+      .then((res) => {
+        console.log('사장님 등록 성공:', res);
+        alert('사장님 등록 신청이 완료되었습니다! 관리자 승인 후 이용 가능합니다.');
+        onClose();
+        // 입력 필드 초기화
+        setBusinessNumber('');
+        setStoreName('');
+        setAddress('');
+      })
+      .catch((err) => {
+        console.error('사장님 등록 실패:', err);
+        const errorMessage = err?.response?.data?.message 
+          || err?.response?.data?.['error-message']
+          || '사장님 등록에 실패했습니다.';
+        alert(errorMessage);
+      });
   };
 
   if (!isOpen) return null;
@@ -36,7 +69,11 @@ export const RegisterOwnerModal = ({ isOpen, onClose }) => {
               name="businessNumber"
               placeholder="사업자 번호를 입력해주세요. (- 제외)"
               value={businessNumber}
-              onChange={(e) => setBusinessNumber(e.target.value)}
+              onChange={(e) => {
+                // 숫자만 입력 가능
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                setBusinessNumber(value);
+              }}
               maxLength="10"
               required
             />

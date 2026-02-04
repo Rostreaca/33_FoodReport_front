@@ -15,7 +15,9 @@ const MyInfo = () => {
         phone: '',
         introduce: '',
         profileImage: null,
-        currentImageUrl: null
+        currentImageUrl: null,
+        role: ''
+
     });
     const [bioLength, setBioLength] = useState(0);
     const [saveChecked, setSaveChecked] = useState(false);
@@ -33,10 +35,8 @@ const MyInfo = () => {
     const fetchMemberInfo = () => {
         authInstance.get('/api/members/info')
             .then((res) => {
-                console.log('회원 정보 조회 응답:', res);
                 const data = res.data.data || res.data;
-                console.log('회원 정보 데이터:', data);
-                
+
                 // 이미지 URL 생성 - S3 URL 그대로 사용
                 let imageUrl = null;
                 if (data.memberImages) {
@@ -47,14 +47,15 @@ const MyInfo = () => {
                         imageUrl = data.memberImages[0].changeName; // S3 전체 URL 그대로 사용
                     }
                 }
-                
+
                 setFormData({
                     email: data.email || '',
                     nickname: data.nickname || '',
                     phone: data.phone || '',
                     introduce: data.introduce || '',
                     profileImage: null,
-                    currentImageUrl: imageUrl
+                    currentImageUrl: imageUrl,
+                    role: data.role || auth.role || ''
                 });
                 setBioLength(data.introduce ? data.introduce.length : 0);
             })
@@ -138,7 +139,7 @@ const MyInfo = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         if (!saveChecked) {
             alert('사용자 정보를 저장하려면 체크해주세요!');
             return;
@@ -167,7 +168,7 @@ const MyInfo = () => {
         submitData.append('nickname', formData.nickname.trim());
         submitData.append('phone', formData.phone || '');
         submitData.append('introduce', formData.introduce || '');
-        
+
         if (formData.profileImage) {
             submitData.append('file', formData.profileImage);
         }
@@ -198,7 +199,7 @@ const MyInfo = () => {
                     localStorage.removeItem('accessToken');
                     navigate('/login');
                 } else {
-                    const errorMessage = err?.response?.data?.message 
+                    const errorMessage = err?.response?.data?.message
                         || err?.response?.data?.['error-message']
                         || '회원 정보 수정에 실패했습니다.';
                     alert(errorMessage);
@@ -233,9 +234,10 @@ const MyInfo = () => {
             <S.Breadcrumb>
                 홈 & 마이페이지 & 내 정보
             </S.Breadcrumb>
-
+            {(auth.role === '[ROLE_OWNER]' || auth.role === '[ROLE_ADMIN]') && (
+                <S.OwnerBadge>사장님 인증</S.OwnerBadge>
+            )}  
             <S.Title>내 정보</S.Title>
-
             <S.Form onSubmit={handleSubmit}>
                 <S.ProfileSection>
                     <S.ProfileImageWrapper>
