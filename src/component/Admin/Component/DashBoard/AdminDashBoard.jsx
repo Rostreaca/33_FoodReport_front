@@ -54,9 +54,9 @@ const AdminDashBoard = () => {
   const [weeklyNewMember, setWeeklyNewMember] = useState([]);
   const [popularRegion, setPopularRegion] = useState([]);
   const [popularTags, setPopularTags] = useState([]);
-
+  
   useEffect(() => {
-    authInstance
+      authInstance
       .get("/api/admin/dashboards")
       .then((res) => {
         console.log(res.data.data);
@@ -161,7 +161,6 @@ const AdminDashBoard = () => {
         </Breadcrumb>
         <WelcomeMessage>안녕하세요, {auth.auth.nickname}님</WelcomeMessage>
       </HeaderSection>
-
       <TopSection>
         <StatCard>
           <StatTitle>오늘 신규 회원</StatTitle>
