@@ -47,7 +47,7 @@ const PlaceDetail = () => {
                 <span>상세 조회</span>
             </Breadcrumb>
 
-            <Title style={{ marginBottom: '20px' }}>맛집 조회</Title>
+            <Title style={{ marginBottom: '20px' }}>맛집 상세 조회</Title>
 
             <Card>
                 <Title>{place.placeTitle}</Title>
