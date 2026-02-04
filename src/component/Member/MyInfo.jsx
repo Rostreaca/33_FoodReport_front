@@ -35,9 +35,7 @@ const MyInfo = () => {
     const fetchMemberInfo = () => {
         authInstance.get('/api/members/info')
             .then((res) => {
-                console.log('회원 정보 조회 응답:', res);
                 const data = res.data.data || res.data;
-                console.log('회원 정보 데이터:', data);
 
                 // 이미지 URL 생성 - S3 URL 그대로 사용
                 let imageUrl = null;
