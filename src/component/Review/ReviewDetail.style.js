@@ -63,7 +63,7 @@ export const UserInfo = styled.div`
   }
 `;
 
-export const ContentText = styled.p`
+export const ContentText = styled.pre`
   font-size: 14px;
   line-height: 1.6;
   color: #333;

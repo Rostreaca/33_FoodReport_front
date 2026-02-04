@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Image as ImageIcon, X , Home, ChevronRight } from 'lucide-react';
 import {
@@ -13,11 +13,10 @@ import {
   CategorySection
 } from './PlaceUpdateForm.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
-import { AuthContext } from '../context/AuthContext.jsx';
+import Toast from '../common/Toast/Toast.jsx';
 
 const PlaceUpdateForm = () => {
   const { placeNo } = useParams();
-  const { auth } = useContext(AuthContext);
 
   const navi = useNavigate();
 
@@ -30,24 +29,25 @@ const PlaceUpdateForm = () => {
   const [activeRegion, setActiveRegion] = useState(null);
 
   const [tags, setTags] = useState([]);
-  const [tagNo, setTagNo] = useState([]);
 
   const [regions, setRegions] = useState([]);
-  const [regionNo, setRegionNo] = useState(0);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
 
   useEffect(() => {
 
     publicInstance.get(`/api/places/${placeNo}`)
         .then((res) => {
-          console.log(res);
           setTitle(res.data.data.placeTitle);
           setContent(res.data.data.placeContent);
           setImages(res.data.data.placeImages);
           setActiveRegion(res.data.data.region);
           res.data.data.placeImages.map(image => setPreviews([...previews, image.changeName]));
           res.data.data.tags.map(tag => setActiveTag([...activeTag, tag]));
-          
-          console.log(activeTag);
         }).catch((err) => {
           navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
         })
@@ -85,6 +85,18 @@ const PlaceUpdateForm = () => {
   };
 
   const handleUpdateSubmit = () => {
+
+    if(title.trim() === '' ){
+      showToast('제목을 작성해주십시오.');
+      return;
+    }
+
+    if(content.trim() === ''){
+      showToast('내용을 작성해주십시오.');
+      return;
+    }
+
+
     const formData = new FormData();
     formData.append('placeTitle', title);
     formData.append('placeContent', content);
@@ -92,7 +104,7 @@ const PlaceUpdateForm = () => {
     activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
     images.forEach(file => formData.append('images', file));
 
-    authInstance.put(`/api/places`, formData, {
+    authInstance.put(`/api/places/${placeNo}`, formData, {
       headers : {
         "Content-Type" : "multipart/form-data"
       }
@@ -107,21 +119,26 @@ const PlaceUpdateForm = () => {
 
     const handleActiveTag = (e) => {
         setActiveTag(activeTag.includes(e) ? activeTag.filter((tag) => { return tag != e }) : [...activeTag, e]);
-        setTagNo(activeTag.includes(e) ? tagNo.filter((num) => {return num != e.tagNo}) : [...tagNo, e.tagNo]);
-
-        console.log(activeTag);
-        console.log(activeRegion);
-
     }
 
     const handleActiveRegion = (e) => {
-
         setActiveRegion(activeRegion === e ? null : e);
-        setRegionNo(activeRegion === e ? 0 : e.regionNo);
     }
+
+    const showToast = (message, type = "error") => {
+    setToast({ show: true, message, type });
+  };
 
   return (
     <Container>
+            {toast.show && (
+              <Toast
+                message={toast.message}
+                type={toast.type}
+                duration={2000}
+                onClose={() => setToast({ ...toast, show: false })}
+              />
+            )}
             <Breadcrumb>
                 <div className="link-item" onClick={() => navi('/')}>
                     <Home size={14} />
@@ -142,6 +159,7 @@ const PlaceUpdateForm = () => {
           value={title} 
           onChange={(e) => setTitle(e.target.value)} 
           placeholder="제목을 입력해주세요." 
+          required
         />
       </FormGroup>
 
@@ -159,6 +177,7 @@ const PlaceUpdateForm = () => {
             value={content} 
             onChange={(e) => setContent(e.target.value)} 
             placeholder="장소에 대한 설명을 입력해주세요." 
+            required
           />
         </EditorContainer>
       </FormGroup>
@@ -186,7 +205,7 @@ const PlaceUpdateForm = () => {
                     {Array.isArray(tags) && tags.map((tag, index) => (
                         <Tag
                             key={index}
-                            $active={activeTag.includes(tag)}
+                            $active={activeTag.filter(active => (active.tagNo === tag.tagNo)).length > 0}
                             onClick={() => handleActiveTag(tag)}
                             data-tooltip={tag.tagContent || "설명이 없습니다."}
                         >
@@ -199,7 +218,7 @@ const PlaceUpdateForm = () => {
                     {Array.isArray(regions) && regions.map((region, index) => (
                         <Region
                             key={index}
-                            $active={activeRegion === region}
+                            $active={region?.regionNo === activeRegion?.regionNo}
                             onClick={() => handleActiveRegion(region)}
                         >
                             {region.regionName}

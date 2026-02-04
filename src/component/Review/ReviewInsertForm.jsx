@@ -30,10 +30,8 @@ const ReviewInsertForm = () => {
   const [activeRegion, setActiveRegion] = useState(null);
 
   const [tags, setTags] = useState([]);
-  const [tagNo, setTagNo] = useState([]);
 
   const [regions, setRegions] = useState([]);
-  const [regionNo, setRegionNo] = useState(0);
 
   useEffect(() => {
         publicInstance.get(`/api/global/tags`)
@@ -90,13 +88,11 @@ const ReviewInsertForm = () => {
 
     const handleActiveTag = (e) => {
         setActiveTag(activeTag.includes(e) ? activeTag.filter((tag) => { return tag != e }) : [...activeTag, e]);
-        setTagNo(activeTag.includes(e) ? tagNo.filter((num) => {return num != e.tagNo}) : [...tagNo, e.tagNo]);
     }
 
     const handleActiveRegion = (e) => {
 
         setActiveRegion(activeRegion === e ? null : e);
-        setRegionNo(activeRegion === e ? 0 : e.regionNo);
     }
 
   return (
