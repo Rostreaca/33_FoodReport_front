@@ -148,33 +148,77 @@ export const UploadPlaceholder = styled.div`
   }
 `;
 
-export const TagSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
+export const SectionTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #1a1a1a;
 `;
 
-export const TagGroup = styled.div`
+export const CategorySection = styled.div`
+  margin-bottom: 48px;
+`;
+
+export const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  margin-bottom: 12px;
 `;
 
 export const Tag = styled.button`
+  position: relative;
   padding: 8px 16px;
   border-radius: 20px;
-  font-size: 13px;
-  border: 1px solid ${props => props.$active ? '#f97316' : '#e5e7eb'};
-  background: ${props => props.$active ? '#fff7ed' : '#fff'};
-  color: ${props => props.$active ? '#f97316' : '#6b7280'};
+  border: 1px solid ${(props) => (props.$active ? "#f97316" : "#e5e7eb")};
+  background: ${(props) => (props.$active ? "#fff7ed" : "#fff")};
+  color: ${(props) => (props.$active ? "#f97316" : "#6b7280")};
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { 
-    border-color: #f97316; 
-    color: #f97316; 
-    background: #fff7ed;
+
+  &:hover {
+    border-color: #f97316;
+    color: #f97316;
+
+    &::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      
+      background: linear-gradient(135deg, #f97316, #fb923c); 
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px; 
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); 
+      z-index: 100;
+      pointer-events: none;
+  }
+
+  }
+`;
+
+export const Region = styled.button`
+  position: relative;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid ${(props) => (props.$active ? "#f97316" : "#e5e7eb")};
+  background: ${(props) => (props.$active ? "#fff7ed" : "#fff")};
+  color: ${(props) => (props.$active ? "#f97316" : "#6b7280")};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #f97316;
+    color: #f97316;
   }
 `;
 

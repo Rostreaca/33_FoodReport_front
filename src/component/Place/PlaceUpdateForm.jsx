@@ -1,47 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Image as ImageIcon, X, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Home, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Image as ImageIcon, X , Home, ChevronRight } from 'lucide-react';
 import {
   Container, FormTitle, FormGroup, Label, Input, EditorContainer, Toolbar,
   ToolbarButton, TextArea, ImageSection, ImageGrid, ImageWrapper,
-  RemoveImageButton, UploadPlaceholder, TagSection, TagGroup, Tag,
+  RemoveImageButton, UploadPlaceholder, Tag,
   ButtonGroup, SubmitButton, CancelButton,
-  Breadcrumb
+  Breadcrumb,
+  TagContainer,
+  SectionTitle,
+  Region,
+  CategorySection
 } from './PlaceUpdateForm.style.js';
+import { authInstance, publicInstance } from '../api/reqService.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 const PlaceUpdateForm = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { placeNo } = useParams();
+  const { auth } = useContext(AuthContext);
+
+  const navi = useNavigate();
 
   // 상태 관리
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState([]); // 서버 전송용 신규 File 객체
-  const [previews, setPreviews] = useState([]); // 화면 표시용 URL (기존 + 신규)
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState('');
+  const [images, setImages] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const [activeTag, setActiveTag] = useState([]);
+  const [activeRegion, setActiveRegion] = useState(null);
 
-  const hashtags = ['#염도_최적화', '#자극치_풀로드', '#제로_스트레스', '#단짠_알고리즘', '#풍미_딥러닝', '#가성비_오버클럭', '#삼삼한_입맛', '#삼중_감동', '#성공확률_100'];
-  const regions = ['서울', '경기', '강원', '충북', '충남', '경북', '경남', '전북', '전남', '부산', '인천', '대전', '대구', '광주', '울산', '제주'];
+  const [tags, setTags] = useState([]);
+  const [tagNo, setTagNo] = useState([]);
 
-  // 기존 장소 데이터 로드
+  const [regions, setRegions] = useState([]);
+  const [regionNo, setRegionNo] = useState(0);
+
   useEffect(() => {
-    const fetchPlaceData = async () => {
-      try {
-        const res = await axios.get(`/api/places/${id}`);
-        const { title, content, imageUrls, tags, region } = res.data;
-        setTitle(title);
-        setContent(content);
-        setPreviews(imageUrls || []);
-        setSelectedTags(tags || []);
-        setSelectedRegion(region || '');
-      } catch (err) {
-        console.error("데이터 로드 실패", err);
-      }
-    };
-    fetchPlaceData();
-  }, [id]);
+
+    publicInstance.get(`/api/places/${placeNo}`)
+        .then((res) => {
+          console.log(res);
+          setTitle(res.data.data.placeTitle);
+          setContent(res.data.data.placeContent);
+          setImages(res.data.data.placeImages);
+          setActiveRegion(res.data.data.region);
+          res.data.data.placeImages.map(image => setPreviews([...previews, image.changeName]));
+          res.data.data.tags.map(tag => setActiveTag([...activeTag, tag]));
+          
+          console.log(activeTag);
+        }).catch((err) => {
+          navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+        })
+
+
+        publicInstance.get(`/api/global/tags`)
+            .then((res) => {
+                setTags(res.data.data);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+
+        publicInstance.get(`/api/global/regions`)
+            .then((res) => {
+                setRegions(res.data.data);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+    
+
+  }, []);
 
   // 이미지 변경 핸들러
   const handleImageChange = (e) => {
@@ -57,15 +84,41 @@ const PlaceUpdateForm = () => {
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleUpdateSubmit = async () => {
+  const handleUpdateSubmit = () => {
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('region', selectedRegion);
-    formData.append('tags', JSON.stringify(selectedTags));
+    formData.append('placeTitle', title);
+    formData.append('placeContent', content);
+    formData.append('regionNo', activeRegion.regionNo);
+    activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
     images.forEach(file => formData.append('images', file));
 
+    authInstance.put(`/api/places`, formData, {
+      headers : {
+        "Content-Type" : "multipart/form-data"
+      }
+    })
+    .then((res) => {
+      navi('/places');
+    }).catch((err) => {
+      navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+    })
+
   };
+
+    const handleActiveTag = (e) => {
+        setActiveTag(activeTag.includes(e) ? activeTag.filter((tag) => { return tag != e }) : [...activeTag, e]);
+        setTagNo(activeTag.includes(e) ? tagNo.filter((num) => {return num != e.tagNo}) : [...tagNo, e.tagNo]);
+
+        console.log(activeTag);
+        console.log(activeRegion);
+
+    }
+
+    const handleActiveRegion = (e) => {
+
+        setActiveRegion(activeRegion === e ? null : e);
+        setRegionNo(activeRegion === e ? 0 : e.regionNo);
+    }
 
   return (
     <Container>
@@ -75,13 +128,13 @@ const PlaceUpdateForm = () => {
                 </div>
                 <ChevronRight size={12} />
                 <div className="link-item" onClick={() => navi('/places')}>
-                    맛집 목록
+                    추천 맛집
                 </div>
                 <ChevronRight size={12} />
-                <span>맛집 수정</span>
+                <span>맛집 작성</span>
             </Breadcrumb>
 
-      <FormTitle>맛집 정보 수정</FormTitle>
+      <FormTitle>맛집 작성</FormTitle>
 
       <FormGroup>
         <Label>제목</Label>
@@ -127,34 +180,38 @@ const PlaceUpdateForm = () => {
         </ImageGrid>
       </ImageSection>
 
-      <TagSection>
-        <TagGroup>
-          {hashtags.map(tag => (
-            <Tag 
-              key={tag} 
-              $active={selectedTags.includes(tag)}
-              onClick={() => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
-            >
-              {tag}
-            </Tag>
-          ))}
-        </TagGroup>
-        <TagGroup>
-          {regions.map(region => (
-            <Tag 
-              key={region} 
-              $active={selectedRegion === region}
-              onClick={() => setSelectedRegion(region)}
-            >
-              {region}
-            </Tag>
-          ))}
-        </TagGroup>
-      </TagSection>
+            <CategorySection>
+                <SectionTitle>해시태그</SectionTitle>
+                <TagContainer>
+                    {Array.isArray(tags) && tags.map((tag, index) => (
+                        <Tag
+                            key={index}
+                            $active={activeTag.includes(tag)}
+                            onClick={() => handleActiveTag(tag)}
+                            data-tooltip={tag.tagContent || "설명이 없습니다."}
+                        >
+                            #{tag.tagTitle}
+                        </Tag>
+                    ))}
+                </TagContainer>
+                <SectionTitle>지역</SectionTitle>
+                <TagContainer>
+                    {Array.isArray(regions) && regions.map((region, index) => (
+                        <Region
+                            key={index}
+                            $active={activeRegion === region}
+                            onClick={() => handleActiveRegion(region)}
+                        >
+                            {region.regionName}
+                        </Region>
+                    ))}
+                </TagContainer>
+            </CategorySection>
+
 
       <ButtonGroup>
-        <SubmitButton onClick={handleUpdateSubmit}>수정 완료</SubmitButton>
-        <CancelButton onClick={() => navigate(-1)}>취소</CancelButton>
+        <SubmitButton onClick={handleUpdateSubmit}>작성</SubmitButton>
+        <CancelButton onClick={() => navi(-1)}>취소</CancelButton>
       </ButtonGroup>
     </Container>
   );
