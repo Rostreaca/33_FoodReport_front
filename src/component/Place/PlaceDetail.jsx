@@ -25,11 +25,6 @@ const PlaceDetail = () => {
     const navi = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [place, setPlace] = useState({});
-    const [toast, setToast] = useState({
-        show: false,
-        message: "",
-        type: "error",
-    });
     const [confirm, setConfirm] = useState({
         title : '게시글 삭제',
         message : '정말로 게시글을 삭제하시겠습니까?'
@@ -57,10 +52,6 @@ const PlaceDetail = () => {
 
             setShowConfirm(false);
     }
-
-    // const showToast = (message, type = "error") => {
-    // setToast({ show: true, message, type });
-    // };
 
     return (
         <Container>
