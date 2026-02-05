@@ -167,7 +167,7 @@ const PlaceDetail = () => {
                                     <small>손님</small>
                                 </div>
                             </UserInfo>
-                            {auth.isAuthenticated ? (
+                            {auth.isAuthenticated && auth.memberNo == reply.memberNo ? (
                             <div style={{ position: 'relative' }}>
                                 <MoreHorizontal
                                     size={20}
