@@ -58,10 +58,6 @@ const PlaceDetail = () => {
             setShowConfirm(false);
     }
 
-    // const showToast = (message, type = "error") => {
-    // setToast({ show: true, message, type });
-    // };
-
     return (
         <Container>
             <ConfirmModal 
