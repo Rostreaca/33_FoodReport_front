@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Eye, Heart, MessageSquare, MoreHorizontal,
-    Pencil, X, Image as ImageIcon, ChevronRight, Home
+    Pencil, X, Image as ImageIcon, ChevronRight, Home,
+    Check
 } from 'lucide-react';
 
 import {
@@ -10,7 +11,10 @@ import {
     CommentInputRow, OrangeBtn, CommentItem, CommentBody, DropdownMenu, DropdownItem,
     HeartButton,
     TagContainer,
-    Tag
+    Tag,
+    CommentEditor,
+    CheckBtn,
+    CloseBtn
 } from './ReviewDetail.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
@@ -33,7 +37,8 @@ const ReviewDetail = () => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [selectedReplyNo, setSelectedReplyNo] = useState(0);
     const [replyContent, setReplyContent] = useState('');
-    
+    const [isEditiedReplyNo, setIsEditiedReplyNo] = useState(0);
+    const [editiedReplyContent, setEditiedReplyContent] = useState('');
 
     useEffect(() => {
         findReviewDetail();
@@ -116,6 +121,21 @@ const ReviewDetail = () => {
         
         setShowConfirm(false);
 
+    }
+
+    const handleReplyUpdate = ( replyNo ) => {
+
+        authInstance.put(`/api/reviews/replies/${replyNo}`, {
+            replyContent : editiedReplyContent
+        })
+        .then((res) => {
+            showToast({message : '댓글 수정에 성공했습니다.',type : 'success'});
+            findReviewDetail();
+        }).catch((err) => {
+            showToast({message : '댓글 수정에 실패했습니다.'});
+        })
+
+        setIsEditiedReplyNo(null);
     }
 
     return (
@@ -224,7 +244,7 @@ const ReviewDetail = () => {
                                 <img src={reply.profileImage || "/user.png"} alt="user" />
                                 <div className="details">
                                     <span>{reply.replyWriter} <small style={{ fontWeight: 400, marginLeft: '5px' }}>{Math.ceil((Date.now() - new Date(reply.createDate)) / (24 * 60 * 60 * 1000))}일 전</small></span>
-                                    <small>손님</small>
+                                    <small>{auth.role === '[ROLE_OWNER]' ? '사장님': auth.role === '[ROLE_ADMIN]' ? '관리자' : '손님'}</small>
                                 </div>
                             </UserInfo>
                             {auth.isAuthenticated && auth.memberNo == reply.memberNo ? (
@@ -236,17 +256,38 @@ const ReviewDetail = () => {
                                 />
                                 {isMenuOpen === reply.replyNo && (
                                     <DropdownMenu>
-                                        <DropdownItem><Pencil /> 댓글 수정</DropdownItem>
+                                        <DropdownItem onClick={() => (setIsEditiedReplyNo(reply.replyNo), setEditiedReplyContent(reply.replyContent))}><Pencil /> 댓글 수정</DropdownItem>
                                         <DropdownItem onClick={() => handleModalOpen('reply', '댓글 삭제', '댓글을 삭제하시겠습니까?')}><X /> 댓글 삭제</DropdownItem>
                                     </DropdownMenu>
                                 )}
                             </div>
                             ): <></>}
                         </div>
-                        <CommentBody>{reply.replyContent}</CommentBody>
-                        <HeartButton $active={true}>
-                            <Heart /> {reply.likes}
-                        </HeartButton>
+                        {
+                            isEditiedReplyNo !== reply.replyNo ? 
+                            <div>
+                            <CommentBody>{reply.replyContent}</CommentBody>
+                                <HeartButton $active={true}>
+                                    <Heart /> {reply.likes}
+                                </HeartButton>
+                            </div>
+                            :
+                            (
+                            <div>
+                            <CommentEditor
+                                value={editiedReplyContent}
+                                onChange={(e) => setEditiedReplyContent(e.target.value)}
+                            />
+                                <CheckBtn onClick={() => handleReplyUpdate(reply.replyNo)}>
+                                    <Check size={30} />
+                                </CheckBtn>
+                                
+                                <CloseBtn onClick={() => setIsEditiedReplyNo(null)}>
+                                    <X size={30} />
+                                </CloseBtn>
+                            </div>
+                            )
+                        }
                     </CommentItem>
                 ))}
             </CommentSection>
