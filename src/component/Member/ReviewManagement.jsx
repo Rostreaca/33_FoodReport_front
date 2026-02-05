@@ -1,54 +1,74 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Pagination from '../common/Paging/Pagination';
 import * as S from './ReviewManagement.style';
+import { authInstance } from '../api/reqService';
+import { AuthContext } from '../context/AuthContext';
 
 const ReviewManagement = () => {
+    const navigate = useNavigate();
+    const { auth } = useContext(AuthContext);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-
-    // 임시 데이터
-    const reviewsData = [
-        {
-            id: 1,
-            image: '/main.jpg',
-            title: '회사 근처 만두집...',
-            likes: 100,
-            views: 153
-        },
-        {
-            id: 2,
-            image: '/main.jpg',
-            title: '가성비 좋은 삼겹살 추천!',
-            likes: 99,
-            views: 200
-        },
-        {
-            id: 3,
-            image: '/main.jpg',
-            title: '이 곳은 김치찌개의 정석',
-            likes: 89,
-            views: 133
-        },
-        {
-            id: 4,
-            image: '/main.jpg',
-            title: '입에서 살살 녹는 돈카츠',
-            likes: 71,
-            views: 129
-        }
-    ];
-
-    const pageInfo = {
-        currentPage: currentPage,
+    const [reviews, setReviews] = useState([]);
+    const [pageInfo, setPageInfo] = useState({
+        currentPage: 1,
         startPage: 1,
-        endPage: 3,
-        maxPage: 7
+        endPage: 1,
+        maxPage: 1
+    });
+
+    // 회원 리뷰 전체 조회
+    const fetchReviews = (page = 1) => {
+        if (!auth?.accessToken) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
+        authInstance.get(`/api/members/reviews?page=${page}`)
+            .then((res) => {
+                console.log('리뷰 조회 응답:', res);
+                const data = res.data.data || res.data;
+                
+                // reviews 배열 설정
+                setReviews(data.reviews || []);
+                
+                // pageInfo 설정
+                if (data.pageInfo) {
+                    setPageInfo({
+                        currentPage: data.pageInfo.currentPage,
+                        startPage: data.pageInfo.startPage,
+                        endPage: data.pageInfo.endPage,
+                        maxPage: data.pageInfo.maxPage
+                    });
+                }
+            })
+            .catch((err) => {
+                console.error('리뷰 조회 실패:', err);
+                if (err.response?.status === 401 || err.response?.status === 403) {
+                    alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('리뷰를 불러오는데 실패했습니다.');
+                }
+            });
     };
+
+    // 컴포넌트 마운트 시 리뷰 조회
+    useEffect(() => {
+        fetchReviews(currentPage);
+    }, [currentPage, auth?.accessToken]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        // TODO: API 호출
     };
+
+    // 검색 필터링
+    const filteredReviews = reviews.filter(review =>
+        review.reviewTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        review.reviewContent?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <S.ReviewManagementContainer>
@@ -59,7 +79,7 @@ const ReviewManagement = () => {
             <S.Title>리뷰 관리</S.Title>
 
             <S.SearchBar>
-                <S.SearchIcon>Q</S.SearchIcon>
+                <S.SearchIcon>🔍</S.SearchIcon>
                 <S.SearchInput
                     type="text"
                     placeholder="검색어를 입력해주세요"
@@ -68,28 +88,43 @@ const ReviewManagement = () => {
                 />
             </S.SearchBar>
 
-            <S.ReviewGrid>
-                {reviewsData.map((review) => (
-                    <S.ReviewCard key={review.id}>
-                        <S.ReviewImage src={review.image} alt={review.title} />
-                        <S.ReviewContent>
-                            <S.ReviewTitle>{review.title}</S.ReviewTitle>
-                            <S.ReviewStats>
-                                <S.StatItem>
-                                    <S.HeartIcon>❤️</S.HeartIcon>
-                                    {review.likes}
-                                </S.StatItem>
-                                <S.StatItem>
-                                    <S.ViewIcon>👁️</S.ViewIcon>
-                                    {review.views}
-                                </S.StatItem>
-                            </S.ReviewStats>
-                        </S.ReviewContent>
-                    </S.ReviewCard>
-                ))}
-            </S.ReviewGrid>
+            {filteredReviews.length === 0 ? (
+                <S.EmptyMessage>작성한 리뷰가 없습니다.</S.EmptyMessage>
+            ) : (
+                <>
+                    <S.ReviewGrid>
+                        {filteredReviews.map((review) => (
+                            <S.ReviewCard 
+                                key={review.reviewNo}
+                                onClick={() => navigate(`/review/${review.reviewNo}`)}
+                            >
+                                <S.ReviewImage 
+                                    src={review.imageUrl || '/main.jpg'} 
+                                    alt={review.reviewTitle}
+                                    onError={(e) => {
+                                        e.target.src = '/main.jpg';
+                                    }}
+                                />
+                                <S.ReviewContent>
+                                    <S.ReviewTitle>{review.reviewTitle}</S.ReviewTitle>
+                                    <S.ReviewStats>
+                                        <S.StatItem>
+                                            <S.HeartIcon>❤️</S.HeartIcon>
+                                            {review.likes || 0}
+                                        </S.StatItem>
+                                        <S.StatItem>
+                                            <S.ViewIcon>👁️</S.ViewIcon>
+                                            {review.viewCount || 0}
+                                        </S.StatItem>
+                                    </S.ReviewStats>
+                                </S.ReviewContent>
+                            </S.ReviewCard>
+                        ))}
+                    </S.ReviewGrid>
 
-            <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+                    <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+                </>
+            )}
         </S.ReviewManagementContainer>
     );
 };
