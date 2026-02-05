@@ -12,8 +12,9 @@ import {
     TagContainer,
     Tag
 } from './PlaceDetail.style.js';
-import { publicInstance } from '../api/reqService.js';
+import { authInstance, publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
+import Toast from '../common/Toast/Toast.jsx';
 
 const PlaceDetail = () => {
     const { auth } = useContext(AuthContext);
@@ -32,6 +33,17 @@ const PlaceDetail = () => {
                 navi('/errorpage', {state : { code: 404 , message : err.response.data.message} });
             })
     }, []);
+
+    const handlePlaceDelete = () => {
+
+        authInstance.delete(`/api/places/${ placeNo }`)
+            .then((res) => {
+                
+            }).catch((err) => {
+                
+            })
+
+    }
 
     return (
         <Container>

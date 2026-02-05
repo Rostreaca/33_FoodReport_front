@@ -12,14 +12,16 @@ import {
     ColTitle,
     ColDate,
     ExpandedContent,
-    NoticeImg
+    NoticeImg,
+    NonContentArea,
+    BackgroundImg
 } from './NoticeList.style.js';
 import Pagination from '../common/Paging/Pagination.jsx';
 import { publicInstance } from '../api/reqService.js';
 
 const NoticeList = () => {
     const [openId, setOpenId] = useState();
-    const [notices, setNotices] = useState([{ boardNo: 92, boardTitle: "신규 회원 전용 웰컴 페이지가 추가되었습니다.", createDate: "2024-10-21" }]);
+    const [notices, setNotices] = useState([]);
 
 
     const handleToggle = (index) => {
@@ -67,7 +69,7 @@ const NoticeList = () => {
                     <ColDate>등록일</ColDate>
                 </TableHeader>
 
-                {notices.map((notice, index) => (
+                {notices?.length > 0 ? notices.map((notice, index) => (
                     <TableRow key={index}>
                         <RowContent onClick={() => handleToggle(index)}>
                             <ColNumber>{notice.noticeNo}</ColNumber>
@@ -87,9 +89,14 @@ const NoticeList = () => {
                             </ExpandedContent>
                         )}
                     </TableRow>
-                ))}
+                )) : <TableRow>
+                    <NonContentArea>
+                        <BackgroundImg src='/logo.png'/>
+                        <h2>공지사항이 존재하지 않습니다.</h2>
+                    </NonContentArea>
+                    </TableRow>}
             </Table>
-            {pageInfo.startPage !== pageInfo.maxPage ? (
+            {notices?.length > 0 && pageInfo.startPage !== pageInfo.maxPage ? (
             <>
             <Pagination
                 pageInfo={pageInfo}

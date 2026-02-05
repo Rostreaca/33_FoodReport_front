@@ -55,6 +55,17 @@ export const RowContent = styled.div`
   }
 `;
 
+export const NonContentArea = styled.div`
+  font-size: 20px;
+  text-align: center;
+  transition: background-color 0.2s;
+  
+`
+export const BackgroundImg = styled.img`
+  width: 50%;
+  height: 50%;
+`
+
 export const ColNumber = styled.div`
   width: 60px;
   text-align: center;
