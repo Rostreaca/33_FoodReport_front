@@ -23,7 +23,11 @@ const PlaceDetail = () => {
     const navi = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [place, setPlace] = useState({});
-
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "error",
+    });
 
     useEffect(() => {
         publicInstance.get(`/api/places/${placeNo}`)
@@ -38,15 +42,28 @@ const PlaceDetail = () => {
 
         authInstance.delete(`/api/places/${ placeNo }`)
             .then((res) => {
-                
+                showToast(res.data.message, "success");
+                navi('/places');
             }).catch((err) => {
-                
+                showToast(err.response.data.message);
             })
 
     }
 
+    const showToast = (message, type = "error") => {
+    setToast({ show: true, message, type });
+    };
+
     return (
         <Container>
+            {toast.show && (
+                <Toast
+                message={toast.message}
+                type={toast.type}
+                duration={2000}
+                onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
             <Breadcrumb>
                 <div className="link-item" onClick={() => navi('/')}>
                     <Home size={14} />
@@ -59,7 +76,7 @@ const PlaceDetail = () => {
                 <span>상세 조회</span>
             </Breadcrumb>
 
-            <Title style={{ marginBottom: '20px' }}>맛집 조회</Title>
+            <Title style={{ marginBottom: '20px' }}>맛집 상세 조회</Title>
 
             <Card>
                 <Title>{place.placeTitle}</Title>
@@ -96,7 +113,7 @@ const PlaceDetail = () => {
                         <>
                         <div>
                             <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/places/updateform/${placeNo}`) }>수정</ActionBtn>
-                            <ActionBtn $orange>삭제</ActionBtn>
+                            <ActionBtn $orange onClick={handlePlaceDelete}>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
