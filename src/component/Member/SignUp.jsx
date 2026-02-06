@@ -80,19 +80,6 @@ const SignUp = () => {
         }
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 500 * 500) {
-                alert('파일 크기가 너무 큽니다. 500x500 픽셀 이하로 업로드해주세요.');
-                return;
-            }
-            setFormData(prev => ({
-                ...prev,
-                profileImage: file
-            }));
-        }
-    };
 
     const checkEmailDuplicate = () => {
         if (!formData.email) {
@@ -103,7 +90,6 @@ const SignUp = () => {
             setErrors(prev => ({ ...prev, email: '아이디는 이메일 형식이어야합니다.' }));
             return;
         }
-        // TODO: API 호출
         setEmailChecked(true);
         setErrors(prev => ({ ...prev, email: '' }));
     };
@@ -132,12 +118,6 @@ const SignUp = () => {
             return;
         }
 
-        /*
-        if (!emailChecked) {
-            alert('이메일 중복 확인을 해주세요.');
-            return;
-        }
-            */
         publicInstance.post("/api/members", { email, password, nickname, phone, })
 
             .then((result) => {
@@ -194,11 +174,6 @@ const SignUp = () => {
                                         required
                                     />
                                 </S.InputWrapper>
-                                {/* 
-                                <S.CheckButton type="button" onClick={checkEmailDuplicate}>
-                                    아이디 중복확인
-                                </S.CheckButton>
-                                */}
                             </S.InputRow>
                             {errors.email && <S.ErrorText>{errors.email}</S.ErrorText>}
                         </S.InputGroup>
@@ -270,28 +245,6 @@ const SignUp = () => {
                             {errors.phone && <S.ErrorText>{errors.phone}</S.ErrorText>}
                         </S.InputGroup>
                         <div></div>
-                        {/* 
-                        <S.ProfileSection>
-                            <S.ProfileText>
-                                프로필 사진은 귀하의 프로필과 목록에 표시됩니다.
-                            </S.ProfileText>
-                            <S.ProfileText>
-                                PNG 또는 JPG 형식으로 가로 세로 500픽셀 이하로 업로드하세요.
-                            </S.ProfileText>
-                            <S.FileInputWrapper>
-                                <S.FileInput
-                                    type="file"
-                                    id="profileImage"
-                                    accept="image/png,image/jpeg"
-                                    onChange={handleFileChange}
-                                />
-                                <S.FileLabel htmlFor="profileImage">
-                                    🔄 사진 등록하기
-                                </S.FileLabel>
-                            </S.FileInputWrapper>
-                        </S.ProfileSection>
-                                    */}
-
                         <S.SignUpButton type="submit">가입하기</S.SignUpButton>
                     </S.Form>
 
