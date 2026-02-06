@@ -81,6 +81,7 @@ export const ReviewCard = styled.div`
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         border-color: #d1d5db;
     }
+
 `;
 
 export const ReviewImage = styled.img`
@@ -126,5 +127,12 @@ export const HeartIcon = styled.span`
 `;
 
 export const ViewIcon = styled.span`
+    font-size: 16px;
+`;
+
+export const EmptyMessage = styled.div`
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
     font-size: 16px;
 `;
