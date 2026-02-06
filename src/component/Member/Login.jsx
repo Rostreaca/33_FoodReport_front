@@ -30,7 +30,6 @@ const Login = () => {
         }));
     };
     const showToast = (message, type = "error") => {
-        // 알럿 대신 토스트
         setToast({ show: true, message, type });
     };
     const handleSubmit = (e) => {
@@ -38,9 +37,7 @@ const Login = () => {
         const { email, password } = formData;
         publicInstance.post("/api/auth/login", { email, password, })
             .then((result) => {
-                //console.log("서버 응답 실제 데이터:", result.data);
                 const { memberNo, email, nickname, phone, accessToken, refreshToken, role } = result.data.data;
-                //console.log("추출된 값 확인:", { email, nickname, phone });
 
                 // AuthContext의 login 함수 호출
                 login(memberNo, email, nickname, phone, accessToken, refreshToken, role);
@@ -117,38 +114,10 @@ const Login = () => {
                         )}
                     </S.InputGroup>
 
-                    <S.OptionsRow>
-                        <S.CheckboxWrapper>
-                            <S.Checkbox
-                                type="checkbox"
-                                checked={keepLoggedIn}
-                                onChange={(e) => setKeepLoggedIn(e.target.checked)}
-                            />
-                            <S.CheckboxLabel>로그인 상태 유지</S.CheckboxLabel>
-                        </S.CheckboxWrapper>
-                        <S.LinkText to="/find-password">비밀번호 찾기</S.LinkText>
-                    </S.OptionsRow>
-
                     <S.LoginButton type="submit">로그인</S.LoginButton>
+
                 </S.Form>
-
-                <S.Divider>
-                    <S.DividerLine />
-                    <S.DividerText>or</S.DividerText>
-                    <S.DividerLine />
-                </S.Divider>
-
-                <S.SocialLoginSection>
-                    <S.SocialButton $kakao>
-                        <S.SocialIcon>💬</S.SocialIcon>
-                        카카오로 3초만에 시작하기
-                    </S.SocialButton>
-                    <S.SocialButton $google>
-                        <S.SocialIcon>G</S.SocialIcon>
-                        구글로 시작하기
-                    </S.SocialButton>
-                </S.SocialLoginSection>
-
+                
                 <S.SignUpLink>
                     계정이 없으신가요? <Link to="/signup">계정 만들기</Link>
                 </S.SignUpLink>
