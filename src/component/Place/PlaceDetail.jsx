@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Eye, Heart, MessageSquare, MoreHorizontal,
-    Pencil, X, Image as ImageIcon, ChevronRight, Home
+    Pencil, X, Image as ImageIcon, ChevronRight, Home,
+    Check
 } from 'lucide-react';
 
 import {
@@ -10,7 +11,10 @@ import {
     CommentInputRow, OrangeBtn, CommentItem, CommentBody, DropdownMenu, DropdownItem,
     HeartButton,
     TagContainer,
-    Tag
+    Tag,
+    CheckBtn,
+    CommentEditor,
+    CloseBtn
 } from './PlaceDetail.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
@@ -26,10 +30,15 @@ const PlaceDetail = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [place, setPlace] = useState({});
     const [confirm, setConfirm] = useState({
+        type : 'review',
         title : '게시글 삭제',
-        message : '정말로 게시글을 삭제하시겠습니까?'
+        message : '정말로 게시글을 삭제하시겠습니까?',
     })
     const [showConfirm, setShowConfirm] = useState(false);
+    const [selectedReplyNo, setSelectedReplyNo] = useState(0);
+    const [replyContent, setReplyContent] = useState('');
+    const [isEditiedReplyNo, setIsEditiedReplyNo] = useState(0);
+    const [editiedReplyContent, setEditiedReplyContent] = useState('');
 
     useEffect(() => {
         findPlaceDetail();
@@ -39,7 +48,6 @@ const PlaceDetail = () => {
 
         publicInstance.get(`/api/places/${placeNo}`)
             .then((res) => {
-                console.log(res);
                 setPlace(res.data.data);
             }).catch((err) => {
                 navi('/errorpage', {state : { code: 404 , message : err.response.data.message} });
@@ -81,17 +89,83 @@ const PlaceDetail = () => {
                 })
         }
 
-    const handlePlaceDelete = () => {
+    const handleModalOpen = ( type, title, message) => {
 
-        authInstance.delete(`/api/places/${ placeNo }`)
+        setConfirm({type : type, title : title, message : message});
+
+        setShowConfirm(true);
+
+    }
+
+    const handleConfirm = () => {
+        
+        if(confirm.type === 'review'){
+            handlePlaceDelete();
+        } else if(confirm.type === 'reply'){
+            handleReplyDelete(selectedReplyNo);
+        }
+        
+        setShowConfirm(false);
+
+    }
+
+    const handleReplySubmit = () => {
+        
+        if(replyContent.trim() === ''){
+            showToast({message : '댓글 내용은 비어있을 수 없습니다.'});
+            return;
+        }
+
+        authInstance.post(`/api/places/${placeNo}/replies`, {
+            replyContent : replyContent
+        })
             .then((res) => {
                 showToast({message : res.data.message, type : "success"});
-                navi('/places');
+                setReplyContent('');
+                findPlaceDetail();
             }).catch((err) => {
                 showToast({message : err.response.data.message});
             })
 
-            setShowConfirm(false);
+    }
+
+    const handleReplyUpdate = ( replyNo ) => {
+
+        if(editiedReplyContent.trim() === ''){
+            showToast({message : '수정 사항을 작성해 주십시오.'});
+            return;
+        }
+
+        authInstance.put(`/api/places/replies/${replyNo}`, {
+            replyContent : editiedReplyContent
+        })
+        .then((res) => {
+            showToast({message : '댓글 수정에 성공했습니다.',type : 'success'});
+            findPlaceDetail();
+        }).catch((err) => {
+            showToast({message : '댓글 수정에 실패했습니다.'});
+        })
+
+        setIsEditiedReplyNo(null);
+    }
+
+
+        const handleReplyDelete = ( replyNo ) => {
+    
+        authInstance.delete(`/api/places/replies/${replyNo}`)
+            .then((res) => {
+                showToast({message : res.data.message, type : "success"});
+                findPlaceDetail();
+            })
+            .catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+        }
+
+    const handleReplyMenuOpen = ( replyNo ) => {
+        setSelectedReplyNo(replyNo);
+        isMenuOpen === null ? setIsMenuOpen(replyNo) : setIsMenuOpen(null);
     }
 
     return (
@@ -100,7 +174,7 @@ const PlaceDetail = () => {
                 title={confirm.title}
                 message={confirm.message}
                 isOpen={showConfirm}
-                onConfirm={() => handlePlaceDelete()}
+                onConfirm={() => handleConfirm()}
                 onCancel={() => setShowConfirm(false)}
             />
             <Breadcrumb>
@@ -152,7 +226,7 @@ const PlaceDetail = () => {
                         <>
                         <div>
                             <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/places/updateform/${placeNo}`) }>수정</ActionBtn>
-                            <ActionBtn $orange onClick={() => setShowConfirm(true)}>삭제</ActionBtn>
+                            <ActionBtn $orange onClick={() => handleModalOpen('review','게시글 삭제','정말로 게시글을 삭제하시겠습니까?')}>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
@@ -190,8 +264,8 @@ const PlaceDetail = () => {
                 <CommentInputRow>
                     { auth.isAuthenticated? 
                     <>
-                    <input type="text" placeholder="댓글을 입력해주세요..." />
-                    <OrangeBtn>댓글 등록</OrangeBtn>
+                    <input type="text" placeholder="댓글을 입력해주세요..." value={replyContent} onChange={(e) => setReplyContent(e.target.value)}/>
+                    <OrangeBtn onClick={handleReplySubmit}>댓글 등록</OrangeBtn>
                     </>
                     :
                     <input type="text" placeholder="댓글 작성은 로그인 후 진행해주시기 바랍니다." readOnly/>
@@ -213,21 +287,39 @@ const PlaceDetail = () => {
                                 <MoreHorizontal
                                     size={20}
                                     style={{ cursor: 'pointer', color: '#adb5bd' }}
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onClick={() => handleReplyMenuOpen(reply.replyNo)}
                                 />
-                                {isMenuOpen && (
+                                {isMenuOpen === reply.replyNo && (
                                     <DropdownMenu>
-                                        <DropdownItem><Pencil /> 댓글 수정</DropdownItem>
-                                        <DropdownItem><X /> 댓글 삭제</DropdownItem>
+                                        <DropdownItem onClick={() => (setIsEditiedReplyNo(reply.replyNo), setEditiedReplyContent(reply.replyContent))}><Pencil /> 댓글 수정</DropdownItem>
+                                        <DropdownItem onClick={() => handleModalOpen('reply', '댓글 삭제', '댓글을 삭제하시겠습니까?')}><X /> 댓글 삭제</DropdownItem>
                                     </DropdownMenu>
                                 )}
                             </div>
                             ): <></>}
                         </div>
+                        { isEditiedReplyNo != reply.replyNo ?
+                        <div>
                         <CommentBody>{reply.replyContent}</CommentBody>
                         <HeartButton $active={true}>
                             <Heart /> {reply.likes}
                         </HeartButton>
+                        </div>
+                        :
+                        <div>
+                        <CommentEditor
+                                value={editiedReplyContent}
+                                onChange={(e) => setEditiedReplyContent(e.target.value)}
+                            />
+                                <CheckBtn onClick={() => handleReplyUpdate(reply.replyNo)}>
+                                    <Check size={30} />
+                                </CheckBtn>
+                                
+                                <CloseBtn onClick={() => setIsEditiedReplyNo(null)}>
+                                    <X size={30} />
+                                </CloseBtn>
+                        </div>
+                        }
                     </CommentItem>
                 ))}
             </CommentSection>
