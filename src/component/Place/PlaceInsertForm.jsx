@@ -14,9 +14,10 @@ import {
 } from './PlaceInsertForm.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
+import { ToastContext } from '../context/ToastContext.jsx';
 
 const PlaceInsertForm = () => {
-
+  const showToast = useContext(ToastContext);
   const { auth } = useContext(AuthContext);
 
   const navi = useNavigate();
@@ -66,6 +67,15 @@ const PlaceInsertForm = () => {
   };
 
   const handleUpdateSubmit = () => {
+
+    if(title.trim() === ''){
+      showToast({message : '제목은 비어있을 수 없습니다.'});
+    }
+
+    if(content.trim() === ''){
+      showToast({message : '내용은 비어있을 수 없습니다.'});
+    }
+
     const formData = new FormData();
     formData.append('placeTitle', title);
     formData.append('placeContent', content);
@@ -79,6 +89,7 @@ const PlaceInsertForm = () => {
       }
     })
     .then((res) => {
+      showToast({message : '게시글 작성에 성공하였습니다.', type : 'success'});
       navi('/places');
     }).catch((err) => {
       navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });

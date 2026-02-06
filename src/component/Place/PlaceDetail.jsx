@@ -12,17 +12,24 @@ import {
     TagContainer,
     Tag
 } from './PlaceDetail.style.js';
-import { publicInstance } from '../api/reqService.js';
+import { authInstance, publicInstance } from '../api/reqService.js';
 import { AuthContext } from '../context/AuthContext.jsx';
+import ConfirmModal from '../common/Confirm/ConfirmModal.jsx';
+import { ToastContext } from '../context/ToastContext.jsx';
 
 const PlaceDetail = () => {
     const { auth } = useContext(AuthContext);
+    const showToast = useContext(ToastContext);
 
     const { placeNo } = useParams();
     const navi = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [place, setPlace] = useState({});
-
+    const [confirm, setConfirm] = useState({
+        title : '게시글 삭제',
+        message : '정말로 게시글을 삭제하시겠습니까?'
+    })
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         publicInstance.get(`/api/places/${placeNo}`)
@@ -33,8 +40,28 @@ const PlaceDetail = () => {
             })
     }, []);
 
+    const handlePlaceDelete = () => {
+
+        authInstance.delete(`/api/places/${ placeNo }`)
+            .then((res) => {
+                showToast({message : res.data.message, type : "success"});
+                navi('/places');
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+            setShowConfirm(false);
+    }
+
     return (
         <Container>
+            <ConfirmModal 
+                title={confirm.title}
+                message={confirm.message}
+                isOpen={showConfirm}
+                onConfirm={() => handlePlaceDelete()}
+                onCancel={() => setShowConfirm(false)}
+            />
             <Breadcrumb>
                 <div className="link-item" onClick={() => navi('/')}>
                     <Home size={14} />
@@ -47,7 +74,7 @@ const PlaceDetail = () => {
                 <span>상세 조회</span>
             </Breadcrumb>
 
-            <Title style={{ marginBottom: '20px' }}>맛집 조회</Title>
+            <Title style={{ marginBottom: '20px' }}>맛집 상세 조회</Title>
 
             <Card>
                 <Title>{place.placeTitle}</Title>
@@ -84,7 +111,7 @@ const PlaceDetail = () => {
                         <>
                         <div>
                             <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/places/updateform/${placeNo}`) }>수정</ActionBtn>
-                            <ActionBtn $orange>삭제</ActionBtn>
+                            <ActionBtn $orange onClick={() => setShowConfirm(true)}>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/places')}>목록</ActionBtn>
                         </>
@@ -132,10 +159,10 @@ const PlaceDetail = () => {
                                 <img src={reply.profileImage || "/user.png"} alt="user" />
                                 <div className="details">
                                     <span>{reply.replyWriter} <small style={{ fontWeight: 400, marginLeft: '5px' }}>{Math.ceil((Date.now() - new Date(reply.createDate)) / (24 * 60 * 60 * 1000))}일 전</small></span>
-                                    <small>손님</small>
+                                    <small>{auth.role === '[ROLE_OWNER]' ? '사장님': auth.role === '[ROLE_ADMIN]' ? '관리자' : '손님'}</small>
                                 </div>
                             </UserInfo>
-                            {auth.isAuthenticated ? (
+                            {auth.isAuthenticated && auth.memberNo == reply.memberNo ? (
                             <div style={{ position: 'relative' }}>
                                 <MoreHorizontal
                                     size={20}

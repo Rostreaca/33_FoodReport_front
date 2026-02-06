@@ -11,19 +11,19 @@ import {
   SectionTitle,
   Region,
   CategorySection
-} from './PlaceUpdateForm.style.js';
+} from './ReviewUpdateForm.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
 import Toast from '../common/Toast/Toast.jsx';
 import { ToastContext } from '../context/ToastContext.jsx';
 
-const PlaceUpdateForm = () => {
+const ReviewUpdateForm = () => {
   const showToast = useContext(ToastContext);
 
-  const { placeNo } = useParams();
+  const { reviewNo } = useParams();
 
   const navi = useNavigate();
 
-  // 상태 관리
+  // 상태 관리 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
@@ -37,13 +37,13 @@ const PlaceUpdateForm = () => {
 
   useEffect(() => {
 
-    publicInstance.get(`/api/places/${placeNo}`)
+    publicInstance.get(`/api/reviews/${reviewNo}`)
         .then((res) => {
-          setTitle(res.data.data.placeTitle);
-          setContent(res.data.data.placeContent);
-          setImages(res.data.data.placeImages);
+          setTitle(res.data.data.reviewTitle);
+          setContent(res.data.data.reviewContent);
+          setImages(res.data.data.reviewImages);
           setActiveRegion(res.data.data.region);
-          res.data.data.placeImages.map(image => setPreviews([...previews, image.changeName]));
+          res.data.data.reviewImages.map(image => setPreviews([...previews, image.changeName]));
           res.data.data.tags.map(tag => setActiveTag([...activeTag, tag]));
         }).catch((err) => {
           navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
@@ -95,20 +95,20 @@ const PlaceUpdateForm = () => {
 
 
     const formData = new FormData();
-    formData.append('placeTitle', title);
-    formData.append('placeContent', content);
+    formData.append('reviewTitle', title);
+    formData.append('reviewContent', content);
     formData.append('regionNo', activeRegion.regionNo);
     activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
     images.forEach(file => formData.append('images', file));
 
-    authInstance.put(`/api/places/${placeNo}`, formData, {
+    authInstance.put(`/api/reviews/${reviewNo}`, formData, {
       headers : {
         "Content-Type" : "multipart/form-data"
       }
     })
     .then((res) => {
-      showToast({message : '게시글 수정에 성공했습니다', type : 'success'})
-      navi('/places');
+      showToast({message : '게시글 수정에 성공했습니다.', type : 'success'});
+      navi('/reviews');
     }).catch((err) => {
       navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
     })
@@ -130,21 +130,21 @@ const PlaceUpdateForm = () => {
                     <Home size={14} />
                 </div>
                 <ChevronRight size={12} />
-                <div className="link-item" onClick={() => navi('/places')}>
-                    추천 맛집
+                <div className="link-item" onClick={() => navi('/reviews')}>
+                    리뷰 목록
                 </div>
                 <ChevronRight size={12} />
-                <span>맛집 수정</span>
+                <span>리뷰 수정</span>
             </Breadcrumb>
 
-      <FormTitle>맛집 수정</FormTitle>
+      <FormTitle>리뷰 수정</FormTitle>
 
       <FormGroup>
         <Label>제목</Label>
         <Input 
           value={title} 
           onChange={(e) => setTitle(e.target.value)} 
-          placeholder="제목을 입력해주세요." 
+          reviewholder="제목을 입력해주세요." 
           required
         />
       </FormGroup>
@@ -162,7 +162,7 @@ const PlaceUpdateForm = () => {
           <TextArea 
             value={content} 
             onChange={(e) => setContent(e.target.value)} 
-            placeholder="장소에 대한 설명을 입력해주세요." 
+            reviewholder="장소에 대한 설명을 입력해주세요." 
             required
           />
         </EditorContainer>
@@ -222,4 +222,4 @@ const PlaceUpdateForm = () => {
   );
 };
 
-export default PlaceUpdateForm;
+export default ReviewUpdateForm;

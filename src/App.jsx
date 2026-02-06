@@ -23,12 +23,15 @@ import PlaceUpdateForm from "./component/Place/PlaceUpdateForm";
 import PlaceList from "./component/Place/PlaceList";
 import ReviewInsertForm from "./component/Review/ReviewInsertForm";
 import PlaceInsertForm from "./component/Place/PlaceInsertForm";
+import ReviewUpdateForm from "./component/Review/ReviewUpdateForm";
+import { ToastProvider } from "./component/context/ToastContext";
 
 function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
   return (
     <>
+      <ToastProvider>
       <AuthProvider>
         {!isAdmin && <Header />}
         <Routes>
@@ -37,6 +40,7 @@ function App() {
           <Route path="/reviews" element={<ReviewList />} />
           <Route path="/reviews/insertform" element={<ReviewInsertForm />} />
           <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
+          <Route path="/reviews/updateform/:reviewNo" element={<ReviewUpdateForm />} />
           <Route path="/places" element={<PlaceList />} />
           <Route path="/places/insertform" element={<PlaceInsertForm />} />
           <Route path="/places/:placeNo" element={<PlaceDetail />} />
@@ -63,6 +67,7 @@ function App() {
         </Routes>
         {!isAdmin && <Footer />}
       </AuthProvider>
+      </ToastProvider>
     </>
   );
 }
