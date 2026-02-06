@@ -26,11 +26,14 @@ const ReviewDetail = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(null);
     const [review, setReview] = useState({});
     const [confirm, setConfirm] = useState({
+        type : 'review',
         title : '게시글 삭제',
-        message : '정말로 게시글을 삭제하시겠습니까?'
+        message : '정말로 게시글을 삭제하시겠습니까?',
     })
     const [showConfirm, setShowConfirm] = useState(false);
+    const [selectedReplyNo, setSelectedReplyNo] = useState(0);
     const [replyContent, setReplyContent] = useState('');
+    
 
     useEffect(() => {
         findReviewDetail();
@@ -47,7 +50,7 @@ const ReviewDetail = () => {
 
     const handleReviewDelete = () => {
 
-        authInstance.delete(`/api/reviews/${ reviewNo }`)
+        authInstance.delete(`/api/reviews/${reviewNo}`)
             .then((res) => {
                 showToast({message : res.data.message, type : "success"});
                 navi('/reviews');
@@ -55,7 +58,6 @@ const ReviewDetail = () => {
                 showToast({message : err.response.data.message});
             })
 
-            setShowConfirm(false);
     }
 
     const handleReplySubmit = () => {
@@ -70,6 +72,7 @@ const ReviewDetail = () => {
         })
             .then((res) => {
                 showToast({message : res.data.message, type : "success"});
+                setReplyContent('');
                 findReviewDetail();
             }).catch((err) => {
                 showToast({message : err.response.data.message});
@@ -78,7 +81,41 @@ const ReviewDetail = () => {
     }
 
     const handleReplyMenuOpen = ( replyNo ) => {
+        setSelectedReplyNo(replyNo);
         isMenuOpen === null ? setIsMenuOpen(replyNo) : setIsMenuOpen(null);
+    }
+
+    const handleReplyDelete = ( replyNo ) => {
+
+        authInstance.delete(`/api/reviews/replies/${replyNo}`)
+            .then((res) => {
+                showToast({message : res.data.message, type : "success"});
+                findReviewDetail();
+            })
+            .catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+    }
+
+    const handleModalOpen = ( type, title, message) => {
+
+        setConfirm({type : type, title : title, message : message});
+
+        setShowConfirm(true);
+
+    }
+
+    const handleConfirm = () => {
+        
+        if(confirm.type === 'review'){
+            handleReviewDelete();
+        } else if(confirm.type === 'reply'){
+            handleReplyDelete(selectedReplyNo);
+        }
+        
+        setShowConfirm(false);
+
     }
 
     return (
@@ -87,7 +124,7 @@ const ReviewDetail = () => {
                 title={confirm.title}
                 message={confirm.message}
                 isOpen={showConfirm}
-                onConfirm={() => handleReviewDelete()}
+                onConfirm={() => handleConfirm()}
                 onCancel={() => setShowConfirm(false)}
             />
             <Breadcrumb>
@@ -139,7 +176,7 @@ const ReviewDetail = () => {
                         <>
                         <div>
                             <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/reviews/updateform/${reviewNo}`) }>수정</ActionBtn>
-                            <ActionBtn $orange onClick={() => setShowConfirm(true)}>삭제</ActionBtn>
+                            <ActionBtn $orange onClick={() => handleModalOpen('review', '게시글 삭제', '정말로 게시글을 삭제하시겠습니까?')}>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/reviews')}>목록</ActionBtn>
                         </>
@@ -190,7 +227,7 @@ const ReviewDetail = () => {
                                     <small>손님</small>
                                 </div>
                             </UserInfo>
-                            {auth.isAuthenticated ? (
+                            {auth.isAuthenticated && auth.memberNo == reply.memberNo ? (
                             <div style={{ position: 'relative' }}>
                                 <MoreHorizontal
                                     size={20}
@@ -200,7 +237,7 @@ const ReviewDetail = () => {
                                 {isMenuOpen === reply.replyNo && (
                                     <DropdownMenu>
                                         <DropdownItem><Pencil /> 댓글 수정</DropdownItem>
-                                        <DropdownItem><X /> 댓글 삭제</DropdownItem>
+                                        <DropdownItem onClick={() => handleModalOpen('reply', '댓글 삭제', '댓글을 삭제하시겠습니까?')}><X /> 댓글 삭제</DropdownItem>
                                     </DropdownMenu>
                                 )}
                             </div>
