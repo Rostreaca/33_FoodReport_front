@@ -48,7 +48,7 @@ const ReviewDetail = () => {
                 <span>상세 조회</span>
             </Breadcrumb>
 
-            <Title style={{ marginBottom: '20px' }}>리뷰 조회</Title>
+            <Title style={{ marginBottom: '20px' }}>리뷰 상세 조회</Title>
 
             <Card>
                 <Title>{review.reviewTitle}</Title>
@@ -81,10 +81,10 @@ const ReviewDetail = () => {
                 )}
 
                 <ButtonGroup>
-                    {auth.isAuthenticated? (
+                    {auth.isAuthenticated && auth.memberNo == review.memberNo ? (
                         <>
                         <div>
-                            <ActionBtn $orange style={{ marginRight: '8px' }}>수정</ActionBtn>
+                            <ActionBtn $orange style={{ marginRight: '8px' }} onClick={() => navi(`/reviews/updateform/${reviewNo}`) }>수정</ActionBtn>
                             <ActionBtn $orange>삭제</ActionBtn>
                         </div>
                         <ActionBtn onClick={() => navi('/reviews')}>목록</ActionBtn>
