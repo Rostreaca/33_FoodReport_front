@@ -138,6 +138,28 @@ const ReviewDetail = () => {
         setIsEditiedReplyNo(null);
     }
 
+    const handleReviewLikeSave = () => {
+        
+        authInstance.post(`/api/reviews/${reviewNo}/likes`)
+            .then((res) => {
+                showToast({message : res.data.message, type : 'success'});
+                findReviewDetail();
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+    }
+
+    const handleReviewLikeDelete = () => {
+        
+        authInstance.delete(`/api/reviews/${reviewNo}/likes`)
+            .then((res) => {
+                showToast({message : res.data.message, type : 'success'});
+                findReviewDetail();
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+    }
+
     const handleReplyLikeSave = ( replyNo ) => {
 
         authInstance.post(`/api/reviews/replies/${replyNo}/likes`)
@@ -238,9 +260,15 @@ const ReviewDetail = () => {
                         <Eye size={16} /> {review.viewCount}
                     </div>
                     {/* 메인 게시글: 좋아요 안 누른 상태 */}
-                    <HeartButton $active={false}>
+                    { review?.likeMembers?.includes(Number(auth.memberNo)) ?
+                    <HeartButton $active={true} onClick={() => handleReviewLikeDelete()}>
                         <Heart /> {review.likes}
                     </HeartButton>
+                    :
+                    <HeartButton $active={false} onClick={() => handleReviewLikeSave()}>
+                        <Heart /> {review.likes}
+                    </HeartButton>
+                    }
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <MessageSquare size={16} /> {review.reviewReplies?.length} 댓글
                     </div>
