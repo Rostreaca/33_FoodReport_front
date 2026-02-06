@@ -14,8 +14,11 @@ import {
 } from './ReviewUpdateForm.style.js';
 import { authInstance, publicInstance } from '../api/reqService.js';
 import Toast from '../common/Toast/Toast.jsx';
+import { ToastContext } from '../context/ToastContext.jsx';
 
 const ReviewUpdateForm = () => {
+  const showToast = useContext(ToastContext);
+
   const { reviewNo } = useParams();
 
   const navi = useNavigate();
@@ -31,12 +34,6 @@ const ReviewUpdateForm = () => {
   const [tags, setTags] = useState([]);
 
   const [regions, setRegions] = useState([]);
-
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "error",
-  });
 
   useEffect(() => {
 
@@ -87,12 +84,12 @@ const ReviewUpdateForm = () => {
   const handleUpdateSubmit = () => {
 
     if(title.trim() === '' ){
-      showToast('제목을 작성해주십시오.');
+      showToast({message : '제목을 작성해주십시오.'});
       return;
     }
 
     if(content.trim() === ''){
-      showToast('내용을 작성해주십시오.');
+      showToast({message : '내용을 작성해주십시오.'});
       return;
     }
 
@@ -110,6 +107,7 @@ const ReviewUpdateForm = () => {
       }
     })
     .then((res) => {
+      showToast({message : '게시글 수정에 성공했습니다.', type : 'success'});
       navi('/reviews');
     }).catch((err) => {
       navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
@@ -125,20 +123,8 @@ const ReviewUpdateForm = () => {
         setActiveRegion(activeRegion === e ? null : e);
     }
 
-    const showToast = (message, type = "error") => {
-    setToast({ show: true, message, type });
-  };
-
   return (
     <Container>
-            {toast.show && (
-              <Toast
-                message={toast.message}
-                type={toast.type}
-                duration={2000}
-                onClose={() => setToast({ ...toast, show: false })}
-              />
-            )}
             <Breadcrumb>
                 <div className="link-item" onClick={() => navi('/')}>
                     <Home size={14} />
