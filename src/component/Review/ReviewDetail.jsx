@@ -125,6 +125,11 @@ const ReviewDetail = () => {
 
     const handleReplyUpdate = ( replyNo ) => {
 
+        if(editiedReplyContent.trim() === ''){
+            showToast({ message : '수정 사항을 작성해 주십시오.'});
+            return;
+        }
+
         authInstance.put(`/api/reviews/replies/${replyNo}`, {
             replyContent : editiedReplyContent
         })

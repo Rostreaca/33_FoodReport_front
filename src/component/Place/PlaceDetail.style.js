@@ -173,6 +173,18 @@ export const CommentBody = styled.div`
   line-height: 1.5;
 `;
 
+export const CommentEditor = styled.textarea`
+  resize : none;
+  width : 70%;
+  height : 50px;
+  padding : 10px;
+  border-radius : 7px;
+  box-shadow : 0 2px 5px rgba(0,0,0,0.2);
+  border-color: #e0e0e0;
+  margin : 5px;
+
+`
+
 export const DropdownMenu = styled.div`
   position: absolute;
   right: 0;
@@ -254,5 +266,30 @@ export const Tag = styled.span`
     content: "#";
     margin-right: 2px;
     color: #94a3b8;
+  }
+`;
+
+const IconButtonBase = styled.span`
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+`;
+
+export const CheckBtn = styled(IconButtonBase)`
+  color: green;
+  &:hover {
+    color: #006400; /* DarkGreen */
+  }
+`;
+
+export const CloseBtn = styled(IconButtonBase)`
+  color: darkred;
+  &:hover {
+    color: #ff0000; /* Red */
   }
 `;
