@@ -23,23 +23,27 @@ const ReviewDetail = () => {
 
     const { reviewNo } = useParams();
     const navi = useNavigate();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(null);
     const [review, setReview] = useState({});
     const [confirm, setConfirm] = useState({
         title : '게시글 삭제',
         message : '정말로 게시글을 삭제하시겠습니까?'
     })
     const [showConfirm, setShowConfirm] = useState(false);
+    const [replyContent, setReplyContent] = useState('');
 
     useEffect(() => {
+        findReviewDetail();
+    }, []);
+
+    const findReviewDetail = () => {
         publicInstance.get(`/api/reviews/${reviewNo}`)
             .then((res) => {
                 setReview(res.data.data);
             }).catch((err) => {
                 navi('/errorpage', {state : { code : 404 , message : err.response.data.message}});
             })
-
-    }, []);
+    }
 
     const handleReviewDelete = () => {
 
@@ -52,6 +56,29 @@ const ReviewDetail = () => {
             })
 
             setShowConfirm(false);
+    }
+
+    const handleReplySubmit = () => {
+        
+        if(replyContent.trim() === ''){
+            showToast({message : '댓글 내용은 비어있을 수 없습니다.'});
+            return;
+        }
+
+        authInstance.post(`/api/reviews/${reviewNo}/replies`, {
+            replyContent : replyContent
+        })
+            .then((res) => {
+                showToast({message : res.data.message, type : "success"});
+                findReviewDetail();
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+    }
+
+    const handleReplyMenuOpen = ( replyNo ) => {
+        isMenuOpen === null ? setIsMenuOpen(replyNo) : setIsMenuOpen(null);
     }
 
     return (
@@ -145,8 +172,8 @@ const ReviewDetail = () => {
                 <CommentInputRow>
                     { auth.isAuthenticated? 
                     <>
-                    <input type="text" placeholder="댓글을 입력해주세요..." />
-                    <OrangeBtn>댓글 등록</OrangeBtn>
+                    <input type="text" placeholder="댓글을 입력해주세요..." value={replyContent} onChange={(e) => setReplyContent(e.target.value)}/>
+                    <OrangeBtn onClick={handleReplySubmit}>댓글 등록</OrangeBtn>
                     </>
                     :
                     <input type="text" placeholder="댓글 작성은 로그인 후 진행해주시기 바랍니다." readOnly/>
@@ -168,9 +195,9 @@ const ReviewDetail = () => {
                                 <MoreHorizontal
                                     size={20}
                                     style={{ cursor: 'pointer', color: '#adb5bd' }}
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onClick={() => handleReplyMenuOpen(reply.replyNo)}
                                 />
-                                {isMenuOpen && (
+                                {isMenuOpen === reply.replyNo && (
                                     <DropdownMenu>
                                         <DropdownItem><Pencil /> 댓글 수정</DropdownItem>
                                         <DropdownItem><X /> 댓글 삭제</DropdownItem>
