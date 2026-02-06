@@ -81,6 +81,19 @@ const PlaceDetail = () => {
                 })
         }
 
+    const handlePlaceDelete = () => {
+
+        authInstance.delete(`/api/places/${ placeNo }`)
+            .then((res) => {
+                showToast({message : res.data.message, type : "success"});
+                navi('/places');
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+            setShowConfirm(false);
+    }
+
     return (
         <Container>
             <ConfirmModal 

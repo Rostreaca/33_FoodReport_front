@@ -29,7 +29,6 @@ const ReviewManagement = () => {
         authInstance.get(`/api/members/reviews?page=${page}`)
             .then((res) => {
                 const data = res.data.data || res.data;
-                console.log(res);
                 setReviews(data.memberReviews || []);
 
                 if (data.pages) {

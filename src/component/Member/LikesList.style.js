@@ -66,7 +66,7 @@ export const LikeItem = styled.div`
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     transition: all 0.2s;
-
+    cursor: pointer;
     &:hover {
         background: #f9fafb;
         border-color: #d1d5db;
@@ -145,3 +145,35 @@ export const HeartIcon = styled.span`
 export const CommentIcon = styled.span`
     font-size: 16px;
 `;
+
+export const FilterButtons = styled.div`
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+`;
+
+export const FilterButton = styled.button`
+    padding: 0.5rem 1rem;
+    background: ${props => props.active ? '#FF6B35' : '#ffffff'};
+    color: ${props => props.active ? '#ffffff' : '#374151'};
+    border: 1px solid ${props => props.active ? '#FF6B35' : '#e5e7eb'};
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background: ${props => props.active ? '#e55a28' : '#f9fafb'};
+        border-color: ${props => props.active ? '#e55a28' : '#d1d5db'};
+    }
+`;
+
+export const EmptyMessage = styled.div`
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+    font-size: 16px;
+`;
+
