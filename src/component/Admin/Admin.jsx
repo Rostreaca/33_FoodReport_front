@@ -6,26 +6,27 @@ import AdminReview from "./Component/Review/AdminReview";
 import AdminHashtag from "./Component/Hashtag/AdminHashtag";
 import Layout from "./Layout/Layout";
 import { Routes, Route } from "react-router-dom";
-import AdminBusiness from "./Component/Business/AdminBusiness"
+import AdminBusiness from "./Component/Business/AdminBusiness";
 import AdminNoticeForm from "./Component/Notice/AdminNoticeForm";
+import PlaceDetail from "../Place/PlaceDetail";
 
 const Admin = () => {
-    return (
-        <Layout >
-                <Routes>
-                    {/* 여기에 Route들 추가 */}
-                    <Route path="/" element={<AdminDashBoard />}/>
-                    <Route path="/members" element={<AdminMember />}/>
-                    <Route path="/notices" element={<AdminNotice />}/>
-                    <Route path="/restaurants" element={<AdminPlace />}/>
-                    <Route path="/reviews" element={<AdminReview />}/>
-                    <Route path="/hashtags" element={<AdminHashtag />}/>
-                    <Route path="/business" element={<AdminBusiness />}/>
-                    <Route path="/notices/form" element={<AdminNoticeForm />} />
-                    <Route path="/notices/form/:noticeNo" element={<AdminNoticeForm />} />
-                </Routes>
-        </Layout>
-    )
-}
+  return (
+    <Layout>
+      <Routes>
+        {/* 여기에 Route들 추가 */}
+        <Route path="/" element={<AdminDashBoard />} />
+        <Route path="/members" element={<AdminMember />} />
+        <Route path="/notices" element={<AdminNotice />} />
+        <Route path="/restaurants" element={<AdminPlace />} />
+        <Route path="/reviews" element={<AdminReview />} />
+        <Route path="/hashtags" element={<AdminHashtag />} />
+        <Route path="/business" element={<AdminBusiness />} />
+        <Route path="/notices/form" element={<AdminNoticeForm />} />
+        <Route path="/notices/form/:noticeNo" element={<AdminNoticeForm />} />
+      </Routes>
+    </Layout>
+  );
+};
 
 export default Admin;

@@ -31,7 +31,6 @@ const AdminBusiness = () => {
     authInstance
       .get(`/api/admin/members/places?page=${page}`)
       .then((res) => {
-        console.log(res);
         const restaurant = res.data.data.restaurant;
         const pages = res.data.data.pageInfo;
         setPageInfo(pages);

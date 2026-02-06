@@ -152,3 +152,147 @@ export const AuthorName = styled.div`
   font-weight: 700;
   flex: 1;
 `;
+
+// ================= Message Section (새로 추가) =================
+export const MessageContainer = styled.div`
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+export const MainMessage = styled.h2`
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+`;
+
+export const SubMessage = styled.p`
+  font-size: 1.5rem;
+  color: #666;
+  margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
+`;
+
+export const IntroText = styled.p`
+  font-size: 1.125rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 4rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+export const FeatureList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 3rem;
+  margin-top: 4rem;
+  margin-bottom: 6rem;
+`;
+
+export const FeatureItem = styled.div`
+  padding: 2.5rem;
+  border-radius: 16px;
+  background: #f8f9fa;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+`;
+
+export const FeatureIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const FeatureTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+`;
+
+export const FeatureDesc = styled.p`
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.8;
+`;
+
+// ================= Bottom Section (새로 추가) =================
+export const BottomSection = styled.div`
+  margin-top: 6rem;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #ff9830 0%, #ff8800 100%);
+  border-radius: 20px;
+`;
+
+export const BottomTitle = styled.h3`
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
+`;
+
+export const ReasonList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+`;
+
+export const ReasonItem = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  text-align: left;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+export const ReasonNumber = styled.div`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.8;
+  flex-shrink: 0;
+`;
+
+export const ReasonContent = styled.div`
+  flex: 1;
+`;
+
+export const ReasonTitle = styled.h4`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+`;
+
+export const ReasonDesc = styled.p`
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+`;
