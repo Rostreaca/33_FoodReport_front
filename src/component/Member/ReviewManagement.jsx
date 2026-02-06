@@ -28,24 +28,22 @@ const ReviewManagement = () => {
 
         authInstance.get(`/api/members/reviews?page=${page}`)
             .then((res) => {
-                console.log('리뷰 조회 응답:', res);
                 const data = res.data.data || res.data;
-                
-                // reviews 배열 설정
-                setReviews(data.reviews || []);
-                
-                // pageInfo 설정
-                if (data.pageInfo) {
+                console.log(res);
+                setReviews(data.memberReviews || []);
+
+                if (data.pages) {
                     setPageInfo({
-                        currentPage: data.pageInfo.currentPage,
-                        startPage: data.pageInfo.startPage,
-                        endPage: data.pageInfo.endPage,
-                        maxPage: data.pageInfo.maxPage
+                        currentPage: data.pages.currentPage,
+                        startPage: data.pages.startPage,
+                        endPage: data.pages.endPage,
+                        maxPage: data.pages.maxPage
                     });
                 }
             })
             .catch((err) => {
                 console.error('리뷰 조회 실패:', err);
+                console.error('에러 응답:', err.response);
                 if (err.response?.status === 401 || err.response?.status === 403) {
                     alert('인증이 만료되었습니다. 다시 로그인해주세요.');
                     navigate('/login');
@@ -58,7 +56,7 @@ const ReviewManagement = () => {
     // 컴포넌트 마운트 시 리뷰 조회
     useEffect(() => {
         fetchReviews(currentPage);
-    }, [currentPage, auth?.accessToken]);
+    }, [currentPage]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -89,17 +87,20 @@ const ReviewManagement = () => {
             </S.SearchBar>
 
             {filteredReviews.length === 0 ? (
-                <S.EmptyMessage>작성한 리뷰가 없습니다.</S.EmptyMessage>
+                <S.EmptyMessage>
+                    {searchTerm ? '검색 결과가 없습니다.' : '작성한 리뷰가 없습니다.'}
+                </S.EmptyMessage>
             ) : (
                 <>
                     <S.ReviewGrid>
                         {filteredReviews.map((review) => (
-                            <S.ReviewCard 
+
+                            <S.ReviewCard
                                 key={review.reviewNo}
                                 onClick={() => navigate(`/review/${review.reviewNo}`)}
                             >
-                                <S.ReviewImage 
-                                    src={review.imageUrl || '/main.jpg'} 
+                                <S.ReviewImage
+                                    src={review.thumbnail || '/main.jpg'}
                                     alt={review.reviewTitle}
                                     onError={(e) => {
                                         e.target.src = '/main.jpg';
@@ -122,7 +123,9 @@ const ReviewManagement = () => {
                         ))}
                     </S.ReviewGrid>
 
-                    <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+                    {pageInfo.maxPage > 1 && (
+                        <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+                    )}
                 </>
             )}
         </S.ReviewManagementContainer>
