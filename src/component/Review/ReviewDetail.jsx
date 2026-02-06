@@ -324,7 +324,7 @@ const ReviewDetail = () => {
                             <div>
                             <CommentBody>{reply.replyContent}</CommentBody>
                             {
-                                reply.likeMembers.includes(Number(auth.memberNo)) ?
+                                reply?.likeMembers?.includes(Number(auth.memberNo)) ?
                                 <HeartButton $active={true} onClick={() => handleReplyLikeDelete(reply.replyNo)} >
                                     <Heart /> {reply.likes}
                                 </HeartButton>

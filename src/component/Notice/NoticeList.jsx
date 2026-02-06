@@ -18,8 +18,11 @@ import {
 } from './NoticeList.style.js';
 import Pagination from '../common/Paging/Pagination.jsx';
 import { publicInstance } from '../api/reqService.js';
+import { useNavigate } from 'react-router-dom';
 
 const NoticeList = () => {
+
+    const navi = useNavigate();
     const [openId, setOpenId] = useState();
     const [notices, setNotices] = useState([]);
 
@@ -39,11 +42,10 @@ const NoticeList = () => {
 
         publicInstance.get(`/api/notices?page=${pageInfo.currentPage}`)
         .then((res) => {
-            console.log(res);
             setNotices(res.data.data.notices);
             setPageInfo(res.data.data.pageInfo);
         }).catch((err) => {
-            console.log(err);
+            navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
         })
 
     }

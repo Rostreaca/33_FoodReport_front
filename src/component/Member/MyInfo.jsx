@@ -173,27 +173,17 @@ const MyInfo = () => {
             submitData.append('file', formData.profileImage);
         }
 
-        console.log('전송 데이터:', {
-            nickname: formData.nickname.trim(),
-            phone: formData.phone || '',
-            introduce: formData.introduce || '',
-            hasFile: !!formData.profileImage
-        });
-
         authInstance.put('/api/members/info', submitData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
             .then((res) => {
-                console.log('회원 정보 수정 성공:', res);
                 alert('회원 정보가 수정되었습니다.');
                 setSaveChecked(false);
                 fetchMemberInfo(); // window.location.reload() 대신 데이터 재조회
             })
             .catch((err) => {
-                console.error('회원 정보 수정 실패:', err);
-                console.error('에러 응답:', err.response);
                 if (err.response?.status === 401 || err.response?.status === 403) {
                     alert('인증이 만료되었습니다. 다시 로그인해주세요.');
                     localStorage.removeItem('accessToken');
@@ -245,7 +235,6 @@ const MyInfo = () => {
                             src={getProfileImageUrl()}
                             alt="프로필"
                             onError={(e) => {
-                                console.log('이미지 로드 실패:', e.target.src);
                                 e.target.src = '/user.png';
                             }}
                         />
