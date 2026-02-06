@@ -19,6 +19,7 @@ import {
 } from "./ReviewRow.style";
 import { authInstance } from "../../../api/reqService";
 import Toast from "../../../common/Toast/Toast";
+import { useNavigate } from "react-router-dom";
 
 const ReviewRow = ({ review, onStatusChange }) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -27,6 +28,7 @@ const ReviewRow = ({ review, onStatusChange }) => {
     message: "",
     type: "error",
   });
+  const navi = useNavigate();
 
   const toggleOptions = () => {
     // 토글 옵션
@@ -81,9 +83,7 @@ const ReviewRow = ({ review, onStatusChange }) => {
 
   const handleGoToPost = () => {
     // 게시글로 이동하는 로직
-    console.log("게시글로 이동:", review.reviewNo);
-    // window.location.href = `/review/${review.reviewNo}`;
-    // 또는 navigate(`/review/${review.reviewNo}`);
+    navi(`/reviews/${review.reviewNo}`);
     setIsOptionsOpen(false);
   };
 

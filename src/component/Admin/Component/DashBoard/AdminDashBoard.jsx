@@ -59,7 +59,6 @@ const AdminDashBoard = () => {
       authInstance
       .get("/api/admin/dashboards")
       .then((res) => {
-        console.log(res.data.data);
         const weeklyNewMember = res.data.data.weeklyNewMember;
         const popularRegion = res.data.data.popularRegion;
         const popularTags = res.data.data.popularTags;

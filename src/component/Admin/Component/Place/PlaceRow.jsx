@@ -17,6 +17,7 @@ import {
 } from "./PlaceRow.style";
 import { authInstance } from "../../../api/reqService";
 import Toast from "../../../common/Toast/Toast";
+import { useNavigate } from "react-router-dom";
 
 const PlaceRow = ({ place, onStatusChange }) => {
   const [toast, setToast] = useState({
@@ -25,6 +26,7 @@ const PlaceRow = ({ place, onStatusChange }) => {
     type: "error",
   });
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const navi = useNavigate();
 
   const toggleOptions = () => {
     setIsOptionsOpen(!isOptionsOpen);
@@ -79,9 +81,7 @@ const PlaceRow = ({ place, onStatusChange }) => {
 
   const handleGoToPost = () => {
     // 게시글로 이동하는 로직
-    console.log("게시글로 이동:", place.placeNo);
-    // window.location.href = `/place/${place.placeNo}`;
-    // 또는 navigate(`/place/${place.placeNo}`);
+    navi(`/places/${place.placeNo}`);
     setIsOptionsOpen(false);
   };
 
