@@ -37,13 +37,19 @@ const PlaceDetail = () => {
     const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
+        findPlaceDetail();
+    }, []);
+
+    const findPlaceDetail = () => {
+
         publicInstance.get(`/api/places/${placeNo}`)
             .then((res) => {
+                console.log(res);
                 setPlace(res.data.data);
             }).catch((err) => {
                 navi('/errorpage', {state : { code: 404 , message : err.response.data.message} });
             })
-    }, []);
+    }
 
     const handlePlaceDelete = () => {
 
@@ -57,6 +63,28 @@ const PlaceDetail = () => {
 
             setShowConfirm(false);
     }
+
+        const handlePlaceLikeSave = () => {
+            
+            authInstance.post(`/api/places/${placeNo}/likes`)
+                .then((res) => {
+                    showToast({message : res.data.message, type : 'success'});
+                    findPlaceDetail();
+                }).catch((err) => {
+                    showToast({message : err.response.data.message});
+                })
+        }
+    
+        const handlePlaceLikeDelete = () => {
+            
+            authInstance.delete(`/api/places/${placeNo}/likes`)
+                .then((res) => {
+                    showToast({message : res.data.message, type : 'success'});
+                    findPlaceDetail();
+                }).catch((err) => {
+                    showToast({message : err.response.data.message});
+                })
+        }
 
     return (
         <Container>
@@ -134,10 +162,15 @@ const PlaceDetail = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Eye size={16} /> {place.viewCount}
                     </div>
-                    {/* 메인 게시글: 좋아요 안 누른 상태 */}
-                    <HeartButton $active={false}>
+                    { place?.likeMembers?.includes(Number(auth.memberNo)) ?
+                    <HeartButton $active={true} onClick={() => handlePlaceLikeDelete()}>
                         <Heart /> {place.likes}
                     </HeartButton>
+                    :
+                    <HeartButton $active={false} onClick={() => handlePlaceLikeSave()}>
+                        <Heart /> {place.likes}
+                    </HeartButton>
+                    }
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <MessageSquare size={16} /> {place.placeReplies?.length} 댓글
                     </div>
