@@ -13,9 +13,9 @@ const Footer = () => {
                 </LogoWrapper>
 
                 <NavWrapper>
-                    <NavLink to="/recommendations">추천 맛집</NavLink>
-                    <NavLink to="/help">Help</NavLink>
-                    <NavLink to="/privacy">Privacy</NavLink>
+                    <NavLink to="/places">추천 맛집</NavLink>
+                    <NavLink to="/">Help</NavLink>
+                    <NavLink to="/">Privacy</NavLink>
                 </NavWrapper>
 
                 <CopyrightWrapper>
