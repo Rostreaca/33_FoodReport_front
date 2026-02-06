@@ -117,6 +117,7 @@ const Login = () => {
                         )}
                     </S.InputGroup>
 
+                        {/*
                     <S.OptionsRow>
                         <S.CheckboxWrapper>
                             <S.Checkbox
@@ -126,18 +127,20 @@ const Login = () => {
                             />
                             <S.CheckboxLabel>로그인 상태 유지</S.CheckboxLabel>
                         </S.CheckboxWrapper>
-                        <S.LinkText to="/find-password">비밀번호 찾기</S.LinkText>
+                        <S.LinkText to="/find-password">비밀번호 찾기</S.LinkText> 
                     </S.OptionsRow>
-
+                        */}
                     <S.LoginButton type="submit">로그인</S.LoginButton>
-                </S.Form>
 
+                </S.Form>
+                
+                    {/* 
                 <S.Divider>
                     <S.DividerLine />
                     <S.DividerText>or</S.DividerText>
                     <S.DividerLine />
                 </S.Divider>
-
+                    
                 <S.SocialLoginSection>
                     <S.SocialButton $kakao>
                         <S.SocialIcon>💬</S.SocialIcon>
@@ -148,6 +151,7 @@ const Login = () => {
                         구글로 시작하기
                     </S.SocialButton>
                 </S.SocialLoginSection>
+                */}
 
                 <S.SignUpLink>
                     계정이 없으신가요? <Link to="/signup">계정 만들기</Link>

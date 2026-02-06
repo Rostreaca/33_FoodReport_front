@@ -194,9 +194,11 @@ const SignUp = () => {
                                         required
                                     />
                                 </S.InputWrapper>
+                                {/* 
                                 <S.CheckButton type="button" onClick={checkEmailDuplicate}>
                                     아이디 중복확인
                                 </S.CheckButton>
+                                */}
                             </S.InputRow>
                             {errors.email && <S.ErrorText>{errors.email}</S.ErrorText>}
                         </S.InputGroup>

@@ -45,9 +45,11 @@ const MyPage = () => {
 
             <S.MainContent>
                 <S.TopRightMenu>
+                    {/* 
                     <S.TopMenuItem onClick={() => navigate('/admin')}>
                         관리자페이지
                     </S.TopMenuItem>
+                        */}
                     <S.TopMenuItem onClick={handleLogout}>
                         → 로그아웃
                     </S.TopMenuItem>

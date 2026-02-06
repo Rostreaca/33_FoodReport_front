@@ -96,13 +96,13 @@ const ReviewManagement = () => {
 
                             <S.ReviewCard
                                 key={review.reviewNo}
-                                onClick={() => navigate(`/review/${review.reviewNo}`)}
+                                onClick={() => navigate(`/reviews/${review.reviewNo}`)}
                             >
                                 <S.ReviewImage
-                                    src={review.thumbnail || '/main.jpg'}
+                                    src={review.thumbnail || '/NoPicture.jpg'}
                                     alt={review.reviewTitle}
                                     onError={(e) => {
-                                        e.target.src = '/main.jpg';
+                                        e.target.src = '/NoPicture.jpg';
                                     }}
                                 />
                                 <S.ReviewContent>

@@ -119,24 +119,24 @@ const LikesList = () => {
         if (likeType === 'ALL') {
             // ALL 타입
             if (like.likeType === 'REVIEW') {
-                navigate(`/review/${like.targetNo}`);
+                navigate(`/reviews/${like.targetNo}`);
             } else if (like.likeType === 'REVIEW_REPLY') {
-                navigate(`/review/${like.relatedNo}`);
+                navigate(`/reviews/${like.relatedNo}`);
             } else if (like.likeType === 'PLACE') {
-                navigate(`/place/${like.targetNo}`);
+                navigate(`/places/${like.targetNo}`);
             } else if (like.likeType === 'PLACE_REPLY') {
-                navigate(`/place/${like.relatedNo}`);
+                navigate(`/places/${like.relatedNo}`);
             }
         } else {
             // 개별 타입
             if (likeType === 'REVIEW') {
-                navigate(`/review/${like.reviewNo}`);
+                navigate(`/reviews/${like.reviewNo}`);
             } else if (likeType === 'REVIEW_REPLY') {
-                navigate(`/review/${like.reviewNo}`);
+                navigate(`/reviews/${like.reviewNo}`);
             } else if (likeType === 'PLACE') {
-                navigate(`/place/${like.placeNo}`);
+                navigate(`/places/${like.placeNo}`);
             } else if (likeType === 'PLACE_REPLY') {
-                navigate(`/place/${like.placeNo}`);
+                navigate(`/places/${like.placeNo}`);
             }
         }
     };
