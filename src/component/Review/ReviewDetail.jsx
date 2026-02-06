@@ -138,6 +138,29 @@ const ReviewDetail = () => {
         setIsEditiedReplyNo(null);
     }
 
+    const handleReplyLikeSave = ( replyNo ) => {
+
+        authInstance.post(`/api/reviews/replies/${replyNo}/likes`)
+            .then((res) => {
+                showToast({message : res.data.message, type : 'success'});
+                findReviewDetail();
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+    }
+
+    const handleReplyLikeDelete = ( replyNo ) => {
+
+        authInstance.delete(`/api/reviews/replies/${replyNo}/likes`)
+            .then((res) => {
+                showToast({message : res.data.message, type : 'success'});
+                findReviewDetail();
+            }).catch((err) => {
+                showToast({message : err.response.data.message});
+            })
+
+    }
     return (
         <Container>
             <ConfirmModal 
@@ -267,9 +290,17 @@ const ReviewDetail = () => {
                             isEditiedReplyNo !== reply.replyNo ? 
                             <div>
                             <CommentBody>{reply.replyContent}</CommentBody>
-                                <HeartButton $active={true}>
+                            {
+                                reply.likeMembers.includes(Number(auth.memberNo)) ?
+                                <HeartButton $active={true} onClick={() => handleReplyLikeDelete(reply.replyNo)} >
                                     <Heart /> {reply.likes}
                                 </HeartButton>
+                                :
+                                <HeartButton $active={false} onClick={() => handleReplyLikeSave(reply.replyNo)} >
+                                    <Heart /> {reply.likes}
+                                </HeartButton>
+
+                            }
                             </div>
                             :
                             (
