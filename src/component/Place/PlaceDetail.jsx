@@ -159,7 +159,7 @@ const PlaceDetail = () => {
                                 <img src={reply.profileImage || "/user.png"} alt="user" />
                                 <div className="details">
                                     <span>{reply.replyWriter} <small style={{ fontWeight: 400, marginLeft: '5px' }}>{Math.ceil((Date.now() - new Date(reply.createDate)) / (24 * 60 * 60 * 1000))}일 전</small></span>
-                                    <small>손님</small>
+                                    <small>{auth.role === '[ROLE_OWNER]' ? '사장님': auth.role === '[ROLE_ADMIN]' ? '관리자' : '손님'}</small>
                                 </div>
                             </UserInfo>
                             {auth.isAuthenticated && auth.memberNo == reply.memberNo ? (
