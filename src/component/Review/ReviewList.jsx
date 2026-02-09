@@ -1,0 +1,271 @@
+import { useContext, useEffect, useState } from "react";
+import {
+    Container,
+    SectionTitle,
+    CategorySection,
+    TagContainer,
+    Tag,
+    ReviewSection,
+    ReviewHeader,
+    SortDropdownContainer,
+    SortDropdown,
+    SortDropdownMenu,
+    SortOption,
+    WriteButton,
+    ReviewGrid,
+    ReviewCard,
+    CardImageArea,
+    CardImage,
+    CardCategory,
+    CardContent,
+    CardTitleRow,
+    CardTitle,
+    CardStats,
+    StatItem,
+    CardDescription,
+    CardFooter,
+    Author,
+    AuthorAvatar,
+    ReadMoreButton,
+    PaginationWrapper,
+    SearchInput,
+    SearchButton,
+    Icon,
+    PaginationContainer,
+    SearchContainer,
+    LeftSpacer,
+    BackgroundImg,
+    Region
+} from "./ReviewList.style";
+import Pagination from "../common/Paging/Pagination";
+import { ChevronDown, ThumbsUp, Eye, Search } from "lucide-react";
+import { publicInstance } from "../api/reqService";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+const CARD_PLACEHOLDER = "/card.png";
+
+const ReviewList = () => {
+
+    const { auth } = useContext(AuthContext);
+
+    const navi = useNavigate();
+    const [activeTag, setActiveTag] = useState(null);
+    const [activeRegion, setActiveRegion] = useState(null);
+    const [sortOpen, setSortOpen] = useState(false);
+    const [sortBy, setSortBy] = useState("최신순");
+    const [orderBy, setOrderBy] = useState("createDate");
+    const [keyword, setKeyword] = useState("");
+    const [pageInfo, setPageInfo] = useState({
+        currentPage: 1,
+        startPage: 1,
+        endPage: 5,
+        maxPage: 10,
+    });
+    const [tags, setTags] = useState([]);
+    const [tagNo, setTagNo] = useState(0);
+
+    const [regions, setRegions] = useState([]);
+    const [regionNo, setRegionNo] = useState(0);
+
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+        publicInstance.get(`/api/global/tags`)
+            .then((res) => {
+                setTags(res.data.data);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+
+        publicInstance.get(`/api/global/regions`)
+            .then((res) => {
+                setRegions(res.data.data);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+        
+    }, []);
+
+    const findAllReviews = () => {
+        publicInstance.get(`/api/reviews?page=${pageInfo.currentPage}&order=${orderBy}&keyword=${keyword}&tagNo=${tagNo}&regionNo=${regionNo}`)
+            .then((res) => {
+                setPageInfo({
+                    currentPage: res.data.data.pageInfo.currentPage,
+                    startPage: res.data.data.pageInfo.startPage,
+                    endPage: res.data.data.pageInfo.endPage,
+                    maxPage: res.data.data.pageInfo.maxPage
+                });
+                setReviews(res.data.data.reviews);
+            }).catch((err) => {
+                navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
+            })
+    }
+
+    useEffect(() => {
+        findAllReviews();
+    }, [pageInfo.currentPage, orderBy, tagNo, regionNo]);
+
+    const ICONS = {
+        user: "/user.png",
+    };
+
+
+
+    const handleSortSelect = (option) => {
+        setSortBy(option);
+        if (option === "최신순") {
+            setOrderBy("createDate");
+        } else if (option === "좋아요순") {
+            setOrderBy("likes");
+        }
+
+        setSortOpen(false);
+    };
+
+    const handleActiveTag = (e) => {
+        setActiveTag(activeTag === e ? null : e);
+        setTagNo(activeTag === e ? 0 : e.tagNo);
+    }
+
+    const handleActiveRegion = (e) => {
+        setActiveRegion(activeRegion === e ? null : e);
+        setRegionNo(activeRegion === e ? 0 : e.regionNo);
+    }
+
+
+    return (
+        <Container>
+            <CategorySection>
+                <SectionTitle>해시태그</SectionTitle>
+                <TagContainer>
+                    {Array.isArray(tags) && tags.map((tag, index) => (
+                        <Tag
+                            key={index}
+                            $active={activeTag === tag}
+                            onClick={() => handleActiveTag(tag)}
+                            data-tooltip={tag.tagContent || "설명이 없습니다."}
+                        >
+                            #{tag.tagTitle}
+                        </Tag>
+                    ))}
+                </TagContainer>
+                <SectionTitle>지역</SectionTitle>
+                <TagContainer>
+                    {Array.isArray(regions) && regions.map((region, index) => (
+                        <Region
+                            key={index}
+                            $active={activeRegion === region}
+                            onClick={() => handleActiveRegion(region)}
+                        >
+                            {region.regionName}
+                        </Region>
+                    ))}
+                </TagContainer>
+            </CategorySection>
+
+            <ReviewSection>
+                <SectionTitle>리뷰 목록</SectionTitle>
+                <ReviewHeader>
+                    <SortDropdownContainer>
+                        <SortDropdown onClick={() => setSortOpen(!sortOpen)}>
+                            {sortBy} <ChevronDown size={16} />
+                        </SortDropdown>
+                        <SortDropdownMenu $open={sortOpen}>
+                            <SortOption $active={sortBy === "최신순"} onClick={() => handleSortSelect("최신순")}>
+                                최신순
+                            </SortOption>
+                            <SortOption $active={sortBy === "좋아요순"} onClick={() => handleSortSelect("좋아요순")}>
+                                좋아요순
+                            </SortOption>
+                        </SortDropdownMenu>
+                    </SortDropdownContainer>
+                    { auth.isAuthenticated ?
+                    <WriteButton onClick={() => navi('/reviews/insertform')}>글쓰기</WriteButton>
+                    :
+                    <></>
+                    }
+                </ReviewHeader>
+
+                <ReviewGrid>
+                    {reviews[0] !== undefined ? reviews.map((review, index) => (
+                        <ReviewCard key={index} onClick={() => navi(`/reviews/${review.reviewNo}`)}>
+                            <CardImageArea>
+                                <CardImage src={review.reviewImages[0] === undefined ? CARD_PLACEHOLDER : review.reviewImages[0].changeName} alt={review.reviewTitle} />
+                                <CardCategory>#{review.tags[0] === undefined ? '태그없음' : review.tags[0].tagTitle}</CardCategory>
+                            </CardImageArea>
+                            <CardContent>
+                                <CardTitleRow>
+                                    <CardTitle>{review.reviewTitle}</CardTitle>
+                                    <CardStats>
+                                        <StatItem>
+                                            <ThumbsUp size={14} /> {review.likes}
+                                        </StatItem>
+                                        <StatItem>
+                                            <Eye size={14} /> {review.viewCount}
+                                        </StatItem>
+                                    </CardStats>
+                                </CardTitleRow>
+                                <CardDescription>{review.reviewContent}</CardDescription>
+                                <CardFooter>
+                                    <Author>
+                                        <AuthorAvatar>
+                                            <Icon src={review.profileImage || ICONS.user} alt="" />
+                                        </AuthorAvatar>
+                                        {review.reviewWriter !== null ? review.reviewWriter : '탈퇴유저'}
+                                    </Author>
+                                </CardFooter>
+                            </CardContent>
+                        </ReviewCard>
+                    )) : (<>
+                        <LeftSpacer />
+                        <BackgroundImg src="/logo.png" alt="foodReport로고" />
+                        <br />
+                        <LeftSpacer />
+                        <SectionTitle>게시글이 존재하지 않습니다.</SectionTitle>
+                    </>
+                    )
+                    }
+                </ReviewGrid>
+
+                {reviews[0] !== undefined ?
+                    (<PaginationWrapper>
+                        <LeftSpacer />
+                        { pageInfo.startPage !== pageInfo.maxPage ?
+                        <PaginationContainer>
+                            <Pagination
+                                pageInfo={pageInfo}
+                                onPageChange={(page) => setPageInfo({ ...pageInfo, currentPage: page })}
+                            />
+                        </PaginationContainer>
+                        :
+                        <LeftSpacer />
+                        }
+                        <SearchContainer>
+                            <SearchInput>
+                                <SearchButton onClick={() => findAllReviews()}>
+                                    <Search size={16} color="#9ca3af" />
+                                </SearchButton>
+                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                            </SearchInput>
+                        </SearchContainer>
+                    </PaginationWrapper>) : <PaginationWrapper>
+                        <LeftSpacer />
+                        <LeftSpacer />
+                        <SearchContainer>
+                            <SearchInput>
+                                <SearchButton onClick={() => findAllReviews()}>
+                                    <Search size={16} color="#9ca3af" />
+                                </SearchButton>
+                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                            </SearchInput>
+                        </SearchContainer>
+                        </PaginationWrapper>
+                }
+            </ReviewSection>
+        </Container>
+    );
+
+}
+
+export default ReviewList;

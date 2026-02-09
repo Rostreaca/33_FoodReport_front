@@ -1,15 +1,75 @@
-import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import "./App.css";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Main from "./component/common/Main/Main";
+import Header from "./component/common/Header/Header";
+import Footer from "./component/common/Footer/Footer";
+import Admin from "./component/Admin/Admin";
+import Login from "./component/Member/Login";
+import { AuthProvider } from "./component/context/AuthContext";
+import SignUp from "./component/Member/SignUp";
+import MyPage from "./component/Member/MyPage";
+import MyInfo from "./component/Member/MyInfo";
+import LikesList from "./component/Member/LikesList";
+import ReviewManagement from "./component/Member/ReviewManagement";
+import MemberWithdrawal from "./component/Member/MemberWithdrawal";
+import ReviewList from "./component/Review/ReviewList";
+import ProtectedRoute from "./component/ProtectedURL";
+import ReviewDetail from "./component/Review/ReviewDetail";
+import PlaceDetail from "./component/Place/PlaceDetail";
+import ErrorPage from "./component/common/ErrorPage/ErrorPage";
+import SearchList from "./component/global/SearchList";
+import NoticeList from "./component/Notice/NoticeList";
+import PlaceUpdateForm from "./component/Place/PlaceUpdateForm";
+import PlaceList from "./component/Place/PlaceList";
+import ReviewInsertForm from "./component/Review/ReviewInsertForm";
+import PlaceInsertForm from "./component/Place/PlaceInsertForm";
+import ReviewUpdateForm from "./component/Review/ReviewUpdateForm";
+import { ToastProvider } from "./component/context/ToastContext";
 
 function App() {
-
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
   return (
     <>
-      <Routes>
-        <Route path="/" element={<h1>Food Report</h1>} />
-      </Routes>
+      <ToastProvider>
+      <AuthProvider>
+        {!isAdmin && <Header />}
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/errorpage" element={<ErrorPage />} />
+          <Route path="/reviews" element={<ReviewList />} />
+          <Route path="/reviews/insertform" element={<ReviewInsertForm />} />
+          <Route path="/reviews/:reviewNo" element={<ReviewDetail />} />
+          <Route path="/reviews/updateform/:reviewNo" element={<ReviewUpdateForm />} />
+          <Route path="/places" element={<PlaceList />} />
+          <Route path="/places/insertform" element={<PlaceInsertForm />} />
+          <Route path="/places/:placeNo" element={<PlaceDetail />} />
+          <Route path="/places/updateform/:placeNo" element={<PlaceUpdateForm />} />
+          <Route path="/notices" element={<NoticeList />} />
+          <Route path="/searchlist" element={<SearchList />} />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute requiredRole="ROLE_ADMIN">
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/mypage" element={<MyPage />}>
+            <Route index element={<MyInfo />} />
+            <Route path="info" element={<MyInfo />} />
+            <Route path="likes" element={<LikesList />} />
+            <Route path="reviews" element={<ReviewManagement />} />
+            <Route path="withdrawal" element={<MemberWithdrawal />} />
+          </Route>
+        </Routes>
+        {!isAdmin && <Footer />}
+      </AuthProvider>
+      </ToastProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
