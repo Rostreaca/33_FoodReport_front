@@ -65,11 +65,12 @@ const SearchList = () => {
   }, []);
 
   useEffect(() => {
-    setKeyword(searchParam.get('query'));
     setPlaces([]);
     setReviews([]);
+    setKeyword(searchParam.get('query'));
     setPlacePage(1);
     setReviewPage(1);
+
   },[searchParam])
 
   useEffect(() => {
