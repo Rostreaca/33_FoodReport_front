@@ -133,6 +133,12 @@ const ReviewList = () => {
         setRegionNo(activeRegion === e ? 0 : e.regionNo);
     }
 
+    const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        findAllReviews();
+    }
+    }
+
 
     return (
         <Container>
@@ -246,7 +252,7 @@ const ReviewList = () => {
                                 <SearchButton onClick={() => findAllReviews()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
-                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                                <input type="text" onKeyDown={handleKeyDown} onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
                             </SearchInput>
                         </SearchContainer>
                     </PaginationWrapper>) : <PaginationWrapper>
@@ -257,7 +263,7 @@ const ReviewList = () => {
                                 <SearchButton onClick={() => findAllReviews()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
-                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                                <input type="text" onKeyDown={handleKeyDown} onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
                             </SearchInput>
                         </SearchContainer>
                         </PaginationWrapper>
