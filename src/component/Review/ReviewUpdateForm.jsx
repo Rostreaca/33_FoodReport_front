@@ -43,8 +43,8 @@ const ReviewUpdateForm = () => {
           setContent(res.data.data.reviewContent);
           setImages(res.data.data.reviewImages);
           setActiveRegion(res.data.data.region);
-          res.data.data.reviewImages.map(image => setPreviews([...previews, image.changeName]));
-          res.data.data.tags.map(tag => setActiveTag([...activeTag, tag]));
+          setPreviews(res.data.data.reviewImages.map(image => image.changeName));
+          setActiveTag(res.data.data.tags);
         }).catch((err) => {
           navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
         })
@@ -66,6 +66,8 @@ const ReviewUpdateForm = () => {
     
 
   }, []);
+  
+
 
   // 이미지 변경 핸들러
   const handleImageChange = (e) => {
@@ -93,13 +95,21 @@ const ReviewUpdateForm = () => {
       return;
     }
 
-
     const formData = new FormData();
     formData.append('reviewTitle', title);
     formData.append('reviewContent', content);
+    
+    if(activeRegion?.regionNo) {
     formData.append('regionNo', activeRegion.regionNo);
+    }
+
+    if(activeTag && activeTag.length > 0) {
     activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
+    }
+
+    if(images && images.length > 0) {
     images.forEach(file => formData.append('images', file));
+    }
 
     authInstance.put(`/api/reviews/${reviewNo}`, formData, {
       headers : {
@@ -116,7 +126,9 @@ const ReviewUpdateForm = () => {
   };
 
     const handleActiveTag = (e) => {
-        setActiveTag(activeTag.includes(e) ? activeTag.filter((tag) => { return tag != e }) : [...activeTag, e]);
+        const filtered = activeTag.filter((tag) => tag.tagNo !== e.tagNo);
+
+        setActiveTag(filtered.length < activeTag.length ? filtered : [...activeTag, e]);
     }
 
     const handleActiveRegion = (e) => {

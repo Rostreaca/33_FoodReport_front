@@ -43,8 +43,8 @@ const PlaceUpdateForm = () => {
           setContent(res.data.data.placeContent);
           setImages(res.data.data.placeImages);
           setActiveRegion(res.data.data.region);
-          res.data.data.placeImages.map(image => setPreviews([...previews, image.changeName]));
-          res.data.data.tags.map(tag => setActiveTag([...activeTag, tag]));
+          setPreviews(res.data.data.placeImages.map(image => image.changeName));
+          setActiveTag(res.data.data.tags);
         }).catch((err) => {
           navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
         })
@@ -97,9 +97,18 @@ const PlaceUpdateForm = () => {
     const formData = new FormData();
     formData.append('placeTitle', title);
     formData.append('placeContent', content);
+    
+    if(activeRegion?.regionNo) {
     formData.append('regionNo', activeRegion.regionNo);
+    }
+
+    if(activeTag && activeTag.length > 0) {
     activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
+    }
+
+    if(images && images.length > 0) {
     images.forEach(file => formData.append('images', file));
+    }
 
     authInstance.put(`/api/places/${placeNo}`, formData, {
       headers : {
@@ -116,7 +125,9 @@ const PlaceUpdateForm = () => {
   };
 
     const handleActiveTag = (e) => {
-        setActiveTag(activeTag.includes(e) ? activeTag.filter((tag) => { return tag != e }) : [...activeTag, e]);
+                const filtered = activeTag.filter((tag) => tag.tagNo !== e.tagNo);
+
+        setActiveTag(filtered.length < activeTag.length ? filtered : [...activeTag, e]);
     }
 
     const handleActiveRegion = (e) => {
