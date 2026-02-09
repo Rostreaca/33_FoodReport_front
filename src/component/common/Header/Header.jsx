@@ -10,6 +10,13 @@ const Header = () => {
     const { auth, logout } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
     const [keyword, setKeyword] = useState('');
+
+    const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        navi(`/searchList?query=${keyword}`);
+    }
+    }
+
     return (
         <S.HeaderContainer>
             <S.HeaderWrapper>
@@ -27,6 +34,7 @@ const Header = () => {
                             type="text"
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder="음식이름 입력하세요"
                         />
                     </S.SearchWrapper>

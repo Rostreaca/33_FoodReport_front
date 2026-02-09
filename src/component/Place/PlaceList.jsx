@@ -132,6 +132,12 @@ const PlaceList = () => {
         setRegionNo(activeRegion === e ? 0 : e.regionNo);
     }
 
+    const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        findAllPlaces();
+    }
+    }
+
     return (
         <Container>
             <CategorySection>
@@ -244,7 +250,7 @@ const PlaceList = () => {
                                 <SearchButton onClick={() => findAllPlaces()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
-                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                                <input type="text" onChange={(e) => setKeyword(e.target.value)} onKeyDown={handleKeyDown} value={keyword} placeholder="검색어를 입력하세요" />
                             </SearchInput>
                         </SearchContainer>
                     </PaginationWrapper>) : <PaginationWrapper>
@@ -255,7 +261,7 @@ const PlaceList = () => {
                                 <SearchButton onClick={() => findAllPlaces()}>
                                     <Search size={16} color="#9ca3af" />
                                 </SearchButton>
-                                <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="검색어를 입력하세요" />
+                                <input type="text" onChange={(e) => setKeyword(e.target.value)} onKeyDown={handleKeyDown} value={keyword} placeholder="검색어를 입력하세요" />
                             </SearchInput>
                         </SearchContainer>
                         </PaginationWrapper>

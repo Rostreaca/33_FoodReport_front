@@ -74,12 +74,16 @@ const SearchList = () => {
   },[searchParam])
 
   useEffect(() => {
-    findAllPlaces();
+    if(keyword.trim() !== '') {
+      findAllPlaces();
+    }
 
   },[tagNo, regionNo,placePage, keyword])
 
   useEffect(() => {
-    findAllReviews();
+    if(keyword.trim() !== ''){
+      findAllReviews();
+    }
 
   },[tagNo, regionNo, reviewPage, keyword])
 
