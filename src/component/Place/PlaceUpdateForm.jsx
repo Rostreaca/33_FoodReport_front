@@ -26,8 +26,8 @@ const PlaceUpdateForm = () => {
   // 상태 관리
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [deletedImageNos, setDeletedImageNos] = useState([]);
   const [activeTag, setActiveTag] = useState([]);
   const [activeRegion, setActiveRegion] = useState(null);
 
@@ -41,9 +41,11 @@ const PlaceUpdateForm = () => {
         .then((res) => {
           setTitle(res.data.data.placeTitle);
           setContent(res.data.data.placeContent);
-          setImages(res.data.data.placeImages);
           setActiveRegion(res.data.data.region);
-          setPreviews(res.data.data.placeImages.map(image => image.changeName));
+          setPreviews(res.data.data.placeImages.map(image => ({
+            imageNo : image?.imageNo,
+            file : null,
+            url : image?.changeName})));
           setActiveTag(res.data.data.tags);
         }).catch((err) => {
           navi('/errorpage', {state : { code: err.response.data.status , message : err.response.data.message} });
@@ -70,14 +72,22 @@ const PlaceUpdateForm = () => {
   // 이미지 변경 핸들러
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages(prev => [...prev, ...files]);
+    const newItems = files.map(file => ({
+      imageNo: null,               
+      file: file,                  
+      url: URL.createObjectURL(file)
+    }));
+  
+    setPreviews(prev => [...prev, ...newItems]);
 
-    const newPreviews = files.map(file => URL.createObjectURL(file));
-    setPreviews(prev => [...prev, ...newPreviews]);
+    e.target.value = "";
   };
 
-  const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+  const removeImage = (index, imageNo) => {
+    if (imageNo) {
+      setDeletedImageNos(prev => [...prev, imageNo]);
+    }
+    
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -106,10 +116,18 @@ const PlaceUpdateForm = () => {
     activeTag.forEach(tag => formData.append('tagNums', tag.tagNo) );
     }
 
-    if(images && images.length > 0) {
-    images.forEach(file => formData.append('images', file));
+    if (deletedImageNos.length > 0) {
+      deletedImageNos.forEach(num => {
+        formData.append('deleteImageNums', num);
+      });
     }
 
+    const newFiles = previews.filter(item => item.file !== null);
+    if (newFiles.length > 0) {
+      newFiles.forEach(item => {
+        formData.append('images', item.file);
+      });
+    }
     authInstance.put(`/api/places/${placeNo}`, formData, {
       headers : {
         "Content-Type" : "multipart/form-data"
@@ -182,10 +200,10 @@ const PlaceUpdateForm = () => {
       <ImageSection>
         <Label style={{ textAlign: 'center', marginBottom: '20px' }}>이미지 미리보기</Label>
         <ImageGrid>
-          {previews.map((src, index) => (
+          {previews.map((item, index) => (
             <ImageWrapper key={index}>
-              <img src={src} alt="preview" />
-              <RemoveImageButton onClick={() => removeImage(index)}><X size={14} /></RemoveImageButton>
+              <img src={item.url} alt="preview" />
+              <RemoveImageButton onClick={() => removeImage(index, item.imageNo)}><X size={14} /></RemoveImageButton>
             </ImageWrapper>
           ))}
           <UploadPlaceholder as="label">
